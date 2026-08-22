@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { PRODUCT_BRANDS } from "@/data/catalog";
+import { BROWSABLE_BRANDS } from "@/data/catalog";
+import { SERIES, countProducts } from "@/data/products";
 import { STORE, LEGAL } from "@/data/store";
+import ProductThumb from "@/components/ProductThumb";
 import { PhoneIcon, PinIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
@@ -29,33 +31,39 @@ export default function ProductsPage() {
       <section className="section">
         <div className="container">
           <div className="card-grid">
-            {PRODUCT_BRANDS.map((b) => (
-              <article className="p-card" key={b.slug}>
-                <div className="thumb">
-                  <Image
-                    src={b.cover}
-                    alt={`${b.name} product range`}
-                    width={900}
-                    height={600}
-                  />
-                </div>
-                <div className="body">
-                  <h3>{b.name}</h3>
-                  <p className="desc">{b.tagline}</p>
-                  <div className="chips">
-                    {b.highlights.map((h) => (
-                      <span key={h}>{h}</span>
-                    ))}
+            {BROWSABLE_BRANDS.map((b) => {
+              const series = SERIES[b.slug];
+              return (
+                <Link className="p-card" key={b.slug} href={`/products/${b.slug}`}>
+                  <div className="thumb">
+                    {b.cover ? (
+                      <Image
+                        src={b.cover}
+                        alt={`${b.name} product range`}
+                        width={900}
+                        height={600}
+                      />
+                    ) : (
+                      <ProductThumb />
+                    )}
                   </div>
-                  <div className="foot">
-                    <span className="stock">In store</span>
-                    <a href={STORE.phoneHref} className="link">
-                      Ask about stock →
-                    </a>
+                  <div className="body">
+                    <h3>{b.name}</h3>
+                    <p className="desc">{b.tagline}</p>
+                    <div className="chips">
+                      <span>
+                        {series.length} {series.length === 1 ? "series" : "series"}
+                      </span>
+                      <span>{countProducts(b.slug)} flavours</span>
+                    </div>
+                    <div className="foot">
+                      <span className="stock">In store</span>
+                      <span className="link">View the lineup →</span>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="section-foot">

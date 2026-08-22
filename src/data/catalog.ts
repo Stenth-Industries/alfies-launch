@@ -1,3 +1,5 @@
+import { SERIES } from "@/data/products";
+
 export type Brand = {
   slug: string;
   name: string;
@@ -106,7 +108,13 @@ export const BRANDS: Brand[] = [
   },
 ];
 
-/** Brands that have cover art — these get cards on the Products page. */
+/** Brands that have cover art — these get the featured cards on the home page. */
 export const PRODUCT_BRANDS = BRANDS.filter(
   (b): b is Brand & { cover: string } => Boolean(b.cover),
 );
+
+/**
+ * Brands with a transcribed lineup, which is what the Products grid links into.
+ * Level X has no cover art yet, so its card falls back to a placeholder thumb.
+ */
+export const BROWSABLE_BRANDS = BRANDS.filter((b) => SERIES[b.slug]?.length);

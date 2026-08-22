@@ -238,7 +238,7 @@ ul { list-style: none; }
 .trust { border-block: 1px solid var(--line); background: var(--ink-2); }
 .trust .container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   padding: 34px 0;
 }
@@ -363,6 +363,171 @@ ul { list-style: none; }
 .p-card .stock::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px var(--teal); }
 .p-card .link { color: var(--teal); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .p-card .link:hover { text-decoration: underline; }
+/* The whole card is an anchor now, so the inner "link" is styling, not a nested <a>. */
+.p-card { color: inherit; text-decoration: none; }
+.p-card:hover .link { text-decoration: underline; }
+
+/* ---------- product photography placeholder ---------- */
+.p-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 16px;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.02) 0 10px,
+      transparent 10px 20px
+    ),
+    var(--ink-2);
+  border-bottom: 1px solid var(--line);
+}
+.p-thumb svg { width: 30px; height: 30px; fill: rgba(0, 209, 209, 0.5); }
+.p-thumb span {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+/* Inside a brand card the wrapper already sets the 3:2 box, so fill it instead. */
+.p-card .thumb .p-thumb { aspect-ratio: auto; height: 100%; border-bottom: 0; }
+
+/* Renders are cut out on transparent backgrounds, so give them room to breathe
+   and contain rather than crop — a cropped pack shot loses the flavour name. */
+.p-thumb.has-render {
+  background: var(--ink-2);
+  padding: 10px;
+  position: relative;
+}
+.p-thumb.has-render img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.35s;
+}
+.f-card:hover .p-thumb.has-render img { transform: scale(1.06); }
+
+/* ---------- brand detail page ---------- */
+.page-hero.brand-hero { text-align: left; }
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 26px;
+}
+.back-link svg { width: 16px; height: 16px; fill: currentColor; }
+.back-link:hover { color: var(--teal); }
+.brand-hero-head { display: flex; align-items: center; gap: 32px; }
+.brand-hero-logo {
+  flex: none;
+  width: 168px;
+  height: 96px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--ink-2);
+  display: grid;
+  place-items: center;
+  padding: 14px;
+}
+.brand-hero-logo img { max-height: 68px; max-width: 100%; width: auto; height: auto; object-fit: contain; }
+.brand-hero p { margin: 12px 0 0; max-width: 62ch; }
+.brand-hero .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.brand-hero .chips span {
+  font-size: 0.72rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+/* ---------- series + flavour cards ---------- */
+.series { padding: 62px 0; }
+.series-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.series-head h2 {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.series-head p { margin-top: 8px; color: var(--muted); max-width: 62ch; font-size: 0.92rem; }
+.series-head .chips { display: flex; flex-wrap: wrap; gap: 8px; flex: none; }
+.series-head .chips span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--teal);
+  background: rgba(0, 209, 209, 0.1);
+  border: 1px solid rgba(0, 209, 209, 0.25);
+  border-radius: 999px;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+
+.flavour-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+.f-card {
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.25s;
+}
+.f-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 209, 209, 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+.f-card .body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.f-card h3 {
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.25;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.f-card .badge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  border: 1px solid rgba(0, 209, 209, 0.35);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.f-card .note { color: var(--muted); font-size: 0.8rem; }
+.f-card .meta {
+  margin-top: auto;
+  padding-top: 10px;
+  color: var(--muted-2);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 
 /* ---------- visit strip ---------- */
 .visit .container {
@@ -578,8 +743,11 @@ ul { list-style: none; }
       rgba(15, 15, 16, 0.55) 100%
     );
   }
-  .trust .container { grid-template-columns: 1fr; gap: 18px; }
+  .trust .container { grid-template-columns: repeat(2, 1fr); gap: 22px 24px; }
   .card-grid { grid-template-columns: repeat(2, 1fr); }
+  .flavour-grid { grid-template-columns: repeat(3, 1fr); }
+  .brand-hero-head { flex-direction: column; align-items: flex-start; gap: 22px; }
+  .series-head { flex-direction: column; align-items: flex-start; gap: 14px; }
   .visit .container { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; }
   .site-footer .top { grid-template-columns: 1fr 1fr; }
@@ -603,6 +771,8 @@ ul { list-style: none; }
   .header-cta .btn { padding: 12px 14px; }
 }
 @media (max-width: 620px) {
+  .flavour-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .trust .container { grid-template-columns: 1fr; gap: 18px; }
   .card-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .warning-strip .socials { display: none; }

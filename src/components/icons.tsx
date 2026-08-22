@@ -64,6 +64,38 @@ export function StoreIcon() {
   );
 }
 
+export function ImageIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 15.6-5.1-6.1a1 1 0 0 0-1.5 0L10 16.5l-2-2.3a1 1 0 0 0-1.5 0L4 17.2V5h16ZM8.5 10.5a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Z" />
+    </svg>
+  );
+}
+
+export function ArrowLeftIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20Z" />
+    </svg>
+  );
+}
+
+export function RosetteIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13Zm0 2.6 1.32 2.67 2.95.43-2.14 2.08.51 2.94L12 11.33l-2.64 1.39.51-2.94-2.14-2.08 2.95-.43Zm-4.6 11.6-1.9 5.35a.6.6 0 0 0 .82.72L9 21.05l2.05 1.68a.6.6 0 0 0 .96-.28l1.2-3.37a8.44 8.44 0 0 1-5.81-2.88Zm9.2 0a8.44 8.44 0 0 1-3.02 2.35l1.06 2.98a.6.6 0 0 0 .96.28L17.65 21l2.03.82a.6.6 0 0 0 .82-.72Z" />
+    </svg>
+  );
+}
+
+export function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21s-7.8-4.6-9.6-9.35A5.6 5.6 0 0 1 12 6.1a5.6 5.6 0 0 1 9.6 5.55C19.8 16.4 12 21 12 21Z" />
+    </svg>
+  );
+}
+
 export function InstagramIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">

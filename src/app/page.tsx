@@ -6,9 +6,10 @@ import {
   PinIcon,
   PhoneIcon,
   BagIcon,
-  ShieldIcon,
-  ChatIcon,
   StoreIcon,
+  RosetteIcon,
+  ChatIcon,
+  HeartIcon,
   ClockIcon,
   MailIcon,
 } from "@/components/icons";
@@ -62,24 +63,31 @@ export default function HomePage() {
       <section className="trust">
         <div className="container">
           <div className="trust-item">
-            <span className="ico"><ShieldIcon /></span>
+            <span className="ico"><StoreIcon /></span>
             <div>
-              <h3>100% Authentic</h3>
-              <p>Every device and pod sourced from authorized Canadian distributors.</p>
+              <h3>Local to {STORE.city}</h3>
+              <p>Proudly serving our community.</p>
+            </div>
+          </div>
+          <div className="trust-item">
+            <span className="ico"><RosetteIcon /></span>
+            <div>
+              <h3>Quality Products</h3>
+              <p>Top brands and trusted products.</p>
             </div>
           </div>
           <div className="trust-item">
             <span className="ico"><ChatIcon /></span>
             <div>
               <h3>Honest Advice</h3>
-              <p>New to vaping or chasing a flavour? We&apos;ll point you the right way.</p>
+              <p>Real recommendations from real people.</p>
             </div>
           </div>
           <div className="trust-item">
-            <span className="ico"><StoreIcon /></span>
+            <span className="ico"><HeartIcon /></span>
             <div>
-              <h3>Local &amp; Independent</h3>
-              <p>Proudly serving {STORE.city} — drop in, browse the wall, say hi.</p>
+              <h3>Friendly Service</h3>
+              <p>We&apos;re here to help you find what you need.</p>
             </div>
           </div>
         </div>

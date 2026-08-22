@@ -3,7 +3,7 @@ import Link from "next/link";
 import { STORE } from "@/data/store";
 
 /** Intrinsic size of public/logo-light.png, used to derive width from height. */
-const RATIO = 1657 / 888;
+const RATIO = 1749 / 877;
 
 type Props = {
   /** Rendered height in px; width follows the artwork's aspect ratio. */
