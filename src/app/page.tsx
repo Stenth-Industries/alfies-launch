@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import HeroSection from "@/components/HeroSection";
+import FlavourExplorer, { type ProfileTab } from "@/components/FlavourExplorer";
 import { STORE } from "@/data/store";
-import { BRANDS, PRODUCT_BRANDS } from "@/data/catalog";
+import { FLAVOUR_PROFILES } from "@/data/home";
+import { BRANDS, BROWSABLE_BRANDS, PRODUCT_BRANDS } from "@/data/catalog";
 import {
   PinIcon,
   PhoneIcon,
@@ -16,48 +19,20 @@ import {
 
 export default function HomePage() {
   const featured = PRODUCT_BRANDS.slice(0, 3);
-  // The wordmark strip doubles its content so the marquee can loop seamlessly.
-  const marquee = [...BRANDS, ...BRANDS];
+  // The RegExp on each profile cannot cross into a client component.
+  const tabs: ProfileTab[] = FLAVOUR_PROFILES.map(
+    ({ slug, label, blurb, count, items }) => ({
+      slug,
+      label,
+      blurb,
+      count,
+      items,
+    }),
+  );
 
   return (
     <>
-      {/* ---------- hero ---------- */}
-      <section className="hero">
-        <div className="hero-bg">
-          <Image
-            src="/hero.png"
-            alt="A lineup of vape devices on the counter at Alfie's Vape Store"
-            fill
-            sizes="(max-width: 960px) 100vw, 58vw"
-            priority
-          />
-        </div>
-        <div className="container">
-          <div className="hero-copy">
-            <span className="hero-tag">
-              <PinIcon />
-              {STORE.city}, {STORE.province}
-            </span>
-            <h1>
-              Your local <span className="accent">vape store.</span>
-            </h1>
-            <p className="lede">
-              Quality products. Great selection. Friendly service.
-              That&apos;s the <strong>Alfie&apos;s</strong> way.
-            </p>
-            <div className="hero-actions">
-              <Link href="/products" className="btn btn-solid">
-                <BagIcon />
-                Explore Products
-              </Link>
-              <a href={STORE.phoneHref} className="btn btn-outline">
-                <PhoneIcon />
-                Call {STORE.phone}
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* ---------- trust row ---------- */}
       <section className="trust">
@@ -94,7 +69,7 @@ export default function HomePage() {
       </section>
 
       {/* ---------- featured brands ---------- */}
-      <section className="section section-alt">
+      <section className="section">
         <div className="container">
           <div className="section-head">
             <span className="kicker">Featured Brands</span>
@@ -102,19 +77,52 @@ export default function HomePage() {
               The names you <span className="accent">know &amp; trust</span>
             </h2>
             <p>
-              We stock the most popular vape brands in Canada — all under one roof.
+              We stock the most popular vape brands in Canada — all under one
+              roof, with the full lineup listed for {BROWSABLE_BRANDS.length} of
+              them.
             </p>
           </div>
-        </div>
-        <div className="brand-marquee">
-          <div className="brand-track">
-            {marquee.map((b, i) => (
-              <Link href="/products" className="brand-chip" key={`${b.slug}-${i}`} aria-label={b.name}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={b.logo} alt={`${b.name} logo`} loading="lazy" />
-              </Link>
-            ))}
+
+          <div className="brand-grid">
+            {BRANDS.map((b) => {
+              const browsable = BROWSABLE_BRANDS.some((x) => x.slug === b.slug);
+              return (
+                <Link
+                  href={browsable ? `/products/${b.slug}` : "/products"}
+                  className="brand-chip"
+                  key={b.slug}
+                  aria-label={b.name}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={b.logo} alt={`${b.name} logo`} loading="lazy" />
+                </Link>
+              );
+            })}
           </div>
+
+          <div className="section-foot">
+            <Link href="/products" className="btn btn-outline">
+              View All Brands
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- shop by taste ---------- */}
+      <section className="section section-alt">
+        <div className="container">
+          <div className="section-head">
+            <span className="kicker">Shop by taste</span>
+            <h2>
+              Find your <span className="accent">flavour</span>
+            </h2>
+            <p>
+              Most people know what they like before they know which box it
+              comes in. Start there.
+            </p>
+          </div>
+
+          <FlavourExplorer profiles={tabs} perTab={8} />
         </div>
       </section>
 
