@@ -20,6 +20,9 @@ npm start        # serve the production build
 - `src/data/catalog.ts` — the brand cards (name, tagline, highlight chips).
   Add or edit brands here; a brand with a `cover` image gets a card on the
   Products page, logo-only brands appear in the home-page brand strip.
+- `src/data/specs.ts` — the spec sheet (type, puffs, e-liquid, nicotine,
+  charging) for each product line, keyed by `brand|seriesSlug`. Specs belong to
+  the device line, not the flavour. Not wired into any page yet.
 - `public/covers/` — product-card artwork (3:2). `public/brands/` — brand
   wordmarks (most are white-on-transparent, shown on dark chips).
 - `public/logo-light.png` — the header/footer wordmark. **Generated, not
