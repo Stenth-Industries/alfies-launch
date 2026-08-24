@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 import { BRANDS } from "@/data/catalog";
 import { SERIES, countProducts } from "@/data/products";
 import { renderFor } from "@/data/renders";
+import { specFor } from "@/data/specs";
 import { STORE, LEGAL } from "@/data/store";
-import ProductThumb from "@/components/ProductThumb";
+import FlavourGrid from "@/components/FlavourGrid";
 import { PhoneIcon, PinIcon, ArrowLeftIcon } from "@/components/icons";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -89,26 +90,19 @@ export default async function BrandPage({ params }: Params) {
               </div>
             </div>
 
-            <div className="flavour-grid">
-              {s.products.map((p) => (
-                <article className="f-card" key={`${s.slug}-${p.name}`}>
-                  <ProductThumb
-                    src={renderFor(slug, s.slug, p.name)}
-                    alt={`${brand.name} ${s.name} — ${p.name}`}
-                  />
-                  <div className="body">
-                    <h3>
-                      {p.name}
-                      {p.badge && <span className="badge">{p.badge}</span>}
-                    </h3>
-                    {p.note && <p className="note">{p.note}</p>}
-                    <p className="meta">
-                      {brand.name} · {s.name}
-                    </p>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <FlavourGrid
+              brandName={brand.name}
+              phone={STORE.phone}
+              phoneHref={STORE.phoneHref}
+              products={s.products.map((p) => ({
+                name: p.name,
+                badge: p.badge,
+                note: p.note,
+                render: renderFor(slug, s.slug, p.name),
+                seriesName: s.name,
+                spec: specFor(slug, s.slug),
+              }))}
+            />
           </div>
         </section>
       ))}
