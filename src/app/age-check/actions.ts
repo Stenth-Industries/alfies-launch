@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { STORE } from "@/data/store";
-import { AGE_COOKIE, AGE_COOKIE_MAX_AGE, ageInYears } from "@/lib/age-gate";
+import { AGE_COOKIE, ageInYears } from "@/lib/age-gate";
 
 export type AgeCheckState = { error?: string };
 
@@ -44,7 +44,7 @@ export async function verifyAge(
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: AGE_COOKIE_MAX_AGE,
+    // No maxAge: a session cookie, cleared when the browser closes.
   });
 
   redirect(safeNext(formData.get("next")));

@@ -17,8 +17,11 @@
 
 export const AGE_COOKIE = "alfies_age_ok";
 
-/** Roughly a month, then the visitor is asked again. */
-export const AGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
+/**
+ * No maxAge is set on the cookie (see actions.ts) — it's a session cookie,
+ * cleared when the browser closes, so a returning visitor is asked again
+ * next session rather than being remembered for a fixed period.
+ */
 
 /** The gate route. Middleware rewrites every un-verified request here. */
 export const AGE_GATE_PATH = "/age-check";

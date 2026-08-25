@@ -142,7 +142,7 @@ ul { list-style: none; }
 }
 
 .logo { display: flex; align-items: center; flex: none; }
-.logo img { width: auto; height: auto; max-width: 100%; }
+.logo img { max-width: 100%; }
 
 .main-nav { display: flex; gap: 34px; }
 .main-nav a {
