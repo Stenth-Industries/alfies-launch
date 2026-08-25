@@ -176,7 +176,6 @@ function dominantColour(data, w, h, ch, alpha) {
 const files = walk(ROOT);
 const glow = {};
 const scenes = [];
-const sceneKeys = [];
 let cut = 0;
 let already = 0;
 
@@ -205,9 +204,6 @@ for (const file of files) {
       // Photographic edge — nothing to separate. Leave the pixels alone.
       alpha.fill(255);
       scenes.push(file);
-      sceneKeys.push(
-        "/" + file.split(sep).join(posix.sep).replace(/^public\//, ""),
-      );
     } else {
       const mask = floodBackground(data, w, h, ch, bg.colour);
       for (let i = 0; i < n; i++) {
@@ -266,13 +262,6 @@ const banner = `/**
  * whenever renders are added or replaced.
  */
 export const GLOW: Record<string, string> = ${JSON.stringify(glow, null, 2)};
-
-/**
- * Renders with a photographic background that could not be separated. The wall
- * frames these instead of floating them, so a leftover rectangle reads as a
- * deliberate photo rather than a failed cutout.
- */
-export const SCENES: string[] = ${JSON.stringify(sceneKeys.sort(), null, 2)};
 `;
 
 if (!DRY) writeFileSync("src/data/glow.ts", banner);
