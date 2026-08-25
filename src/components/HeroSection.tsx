@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { STORE } from "@/data/store";
 import { PinIcon, PhoneIcon, BagIcon } from "@/components/icons";
+import OpenNow from "@/components/OpenNow";
+import { WALL } from "@/data/home";
 
 /**
  * The landing hero, shared by the live home page and both design variants
@@ -33,22 +35,25 @@ export default function HeroSection() {
             {STORE.city}, {STORE.province}
           </span>
           <h1>
-            Your local <span className="accent">vape destination.</span>
+            Know the taste.
+            <br />
+            <em>Find the box after.</em>
           </h1>
           <p className="lede">
-            Quality products. Great selection. Friendly service. That&apos;s the{" "}
-            <strong>Alfie&apos;s</strong> way.
+            Every flavour {STORE.name} stocks, on one wall — {WALL.length} of
+            them — so you can start from what you actually like.
           </p>
           <div className="hero-actions">
-            <Link href="/products" className="btn btn-solid">
+            <Link href="/#wall" className="btn btn-solid">
               <BagIcon />
-              Explore Products
+              Walk the wall
             </Link>
             <a href={STORE.phoneHref} className="btn btn-outline">
               <PhoneIcon />
               Call {STORE.phone}
             </a>
           </div>
+          <OpenNow className="hero-state" />
         </div>
       </div>
     </section>

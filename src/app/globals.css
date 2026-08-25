@@ -5,25 +5,37 @@
    ========================================================================== */
 
 :root {
+  /* The case is near-monochrome on purpose. Every device on the wall is a
+     saturated candy colour, so the page is the unlit gallery around them —
+     the colour on screen comes from the product photography, not from here.
+     See scripts/knockout-renders.mjs, which samples it. */
+  --ink: #08090b;
+  --ink-2: #0e1014;
+  --ink-3: #161920;
+  --line: rgba(243, 245, 248, 0.08);
+  --line-2: rgba(243, 245, 248, 0.15);
+  --white: #f3f5f8;
+  --muted: rgba(243, 245, 248, 0.6);
+  --muted-2: rgba(243, 245, 248, 0.38);
+
+  /* Teal has exactly one job now: it marks what you can act on. Not kickers,
+     not decoration — the active filter, the focus ring, the live open state.
+     An accent used everywhere stops being an accent. */
   --teal: #00d1d1;
   --aqua: #5ce5e6;
-  --white: #ffffff;
-  --ink: #0f0f10;
-  --ink-2: #161618;
-  --ink-3: #1e1e21;
-  --line: rgba(255, 255, 255, 0.09);
-  --muted: rgba(255, 255, 255, 0.62);
-  --muted-2: rgba(255, 255, 255, 0.4);
+
   --radius: 16px;
   /* Fluid page shell — content stretches with the viewport instead of sitting
      in a fixed 1180px column. Gutters grow with the screen so wide monitors
      get breathing room without the layout collapsing into a narrow strip. */
   --page-max: 1760px;
   --gutter: clamp(16px, 3.4vw, 64px);
-  --section-y: clamp(52px, 6.2vw, 96px);
+  --section-y: clamp(64px, 7vw, 120px);
   /* Warning strip + sticky header — the hero fills what is left of the viewport. */
   --header-h: 132px;
   --font-body: var(--font-archivo), "Segoe UI", Arial, sans-serif;
+  --font-display: var(--font-anton), "Arial Narrow", Impact, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, "SF Mono", Consolas, monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -183,20 +195,36 @@ ul { list-style: none; }
 }
 .hero-bg img {
   /* height-led so the element box *is* the fitted photo — that keeps the mask
-     below on the picture's real edges instead of on empty letterbox. */
+     on the picture's real edges instead of on empty letterbox. */
   height: 100%;
   width: auto;
   max-width: 100%;
   object-fit: contain;
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%),
-    linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%),
-    linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
-  mask-composite: intersect;
+  /* One mask layer, not two. A pair of linear gradients needs mask-composite
+     to combine them, and the -webkit- and standard forms of that property take
+     different keywords — get the pairing wrong and the whole image composites
+     to nothing. A single radial feathers all four edges on its own. */
+  -webkit-mask-image: radial-gradient(
+    116% 104% at 68% 46%,
+    #000 52%,
+    rgba(0, 0, 0, 0.55) 76%,
+    transparent 92%
+  );
+  mask-image: radial-gradient(
+    116% 104% at 68% 46%,
+    #000 52%,
+    rgba(0, 0, 0, 0.55) 76%,
+    transparent 92%
+  );
+  /* Both required. A linear gradient fills the box at the default `auto` size,
+     but a radial with percentage radii does not — leave these off and the mask
+     tiles at its intrinsic size and the picture disappears entirely. */
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
+
 /* A slight overlay so the text remains readable over the vapes if they overlap on small screens */
 .hero-bg::after {
   content: "";
@@ -215,7 +243,7 @@ ul { list-style: none; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--teal);
+  color: var(--muted);
   font-weight: 700;
   font-size: 0.8rem;
   letter-spacing: 0.18em;
@@ -224,44 +252,25 @@ ul { list-style: none; }
 }
 .hero-tag svg { width: 15px; height: 15px; fill: currentColor; }
 .hero h1 {
-  font-size: clamp(2.6rem, 5.4vw, 4.4rem);
-  font-weight: 900;
-  line-height: 1.02;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 6.2rem);
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: -0.015em;
   text-transform: uppercase;
 }
-.hero h1 .accent { color: var(--teal); }
+/* The headline stays one colour. Teal is reserved for things you can act on,
+   and a tinted half-sentence is decoration, not an affordance. */
+.hero h1 em { font-style: normal; color: var(--muted); }
 .hero .lede {
   margin: 26px 0 36px;
   font-size: 1.15rem;
   color: var(--muted);
   max-width: 52ch;
 }
-.hero .lede strong { color: var(--teal); font-weight: 600; }
+.hero .lede strong { color: var(--white); font-weight: 600; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 16px; }
-
-/* ---------- trust row ---------- */
-.trust { border-block: 1px solid var(--line); background: var(--ink-2); }
-.trust .container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
-  gap: clamp(18px, 2vw, 32px);
-  padding-block: clamp(26px, 3vw, 40px);
-}
-.trust-item { display: flex; gap: 16px; align-items: flex-start; }
-.trust-item .ico {
-  flex: none;
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 209, 209, 0.1);
-  border: 1px solid rgba(0, 209, 209, 0.25);
-}
-.trust-item .ico svg { width: 22px; height: 22px; fill: var(--teal); }
-.trust-item h3 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
-.trust-item p { font-size: 0.88rem; color: var(--muted); }
+.hero-state { display: flex; width: fit-content; margin-top: 28px; }
 
 /* ---------- sections ---------- */
 .section { padding-block: var(--section-y); }
@@ -272,7 +281,7 @@ ul { list-style: none; }
   margin: 0 auto clamp(32px, 3.4vw, 52px);
 }
 .section-head .kicker {
-  color: var(--teal);
+  color: var(--muted-2);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.24em;
@@ -281,50 +290,15 @@ ul { list-style: none; }
   margin-bottom: 12px;
 }
 .section-head h2 {
-  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
-  font-weight: 900;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: -0.01em;
 }
 .section-head h2 .accent { color: var(--teal); }
 .section-head p { margin-top: 14px; color: var(--muted); }
 .section-foot { text-align: center; margin-top: 44px; }
-
-/* ---------- brand logo marquee ---------- */
-.brand-marquee { overflow: hidden; position: relative; }
-.brand-marquee::before,
-.brand-marquee::after {
-  content: "";
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 90px;
-  z-index: 2;
-  pointer-events: none;
-}
-.brand-marquee::before { left: 0; background: linear-gradient(90deg, var(--ink-2), transparent); }
-.brand-marquee::after { right: 0; background: linear-gradient(270deg, var(--ink-2), transparent); }
-.brand-track {
-  display: flex;
-  gap: 28px;
-  width: max-content;
-  animation: marquee 32s linear infinite;
-}
-.brand-marquee:hover .brand-track { animation-play-state: paused; }
-@keyframes marquee { to { transform: translateX(-50%); } }
-.brand-chip {
-  flex: none;
-  width: 190px;
-  height: 96px;
-  background: var(--ink-3);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  padding: 18px 24px;
-  transition: transform 0.2s, border-color 0.2s;
-}
-.brand-chip:hover { transform: translateY(-4px); border-color: rgba(0, 209, 209, 0.45); }
-.brand-chip img { max-height: 60px; width: auto; max-width: 100%; object-fit: contain; }
 
 /* ---------- product / brand cards ---------- */
 .card-grid {
@@ -760,7 +734,7 @@ html.dialog-open { overflow: hidden; }
     var(--ink);
 }
 .page-hero .kicker {
-  color: var(--teal);
+  color: var(--muted-2);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.24em;
@@ -769,8 +743,10 @@ html.dialog-open { overflow: hidden; }
   margin-bottom: 12px;
 }
 .page-hero h1 {
-  font-size: clamp(2.2rem, 4.4vw, 3.4rem);
-  font-weight: 900;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5.4vw, 4.4rem);
+  font-weight: 400;
+  line-height: 0.92;
   text-transform: uppercase;
   letter-spacing: -0.01em;
 }
@@ -924,12 +900,10 @@ html.dialog-open { overflow: hidden; }
   }
   .hero-bg img { width: 100%; height: auto; }
   .hero-bg::after { display: none; }
-  .trust .container { grid-template-columns: repeat(2, 1fr); gap: 22px 24px; }
   .card-grid { grid-template-columns: repeat(2, 1fr); }
   .flavour-grid { grid-template-columns: repeat(3, 1fr); }
   .brand-hero-head { flex-direction: column; align-items: flex-start; gap: 22px; }
   .series-head { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .visit .container { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; }
   .site-footer .top { grid-template-columns: 1fr 1fr; }
   .main-nav {
@@ -953,7 +927,6 @@ html.dialog-open { overflow: hidden; }
 }
 @media (max-width: 620px) {
   .flavour-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .trust .container { grid-template-columns: 1fr; gap: 18px; }
   .card-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .warning-strip .socials { display: none; }
@@ -963,124 +936,330 @@ html.dialog-open { overflow: hidden; }
   .age-actions { flex-direction: column; }
 }
 /* ==========================================================================
-   Home page — brand grid + flavour explorer
+   THE WALL — the signature element
+   --------------------------------------------------------------------------
+   The shop's defining object is the lit grid of devices behind the counter.
+   This is that grid: full-bleed, dense, everything at once. Each tile is lit
+   by the colour sampled from its own render, so the only colour on the page
+   is the product's own. Everything around it stays deliberately unlit.
    ========================================================================== */
-
-/* ---------- static brand grid ---------- */
-.brand-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: clamp(12px, 1.4vw, 22px);
+.wall {
+  padding-block: var(--section-y) clamp(40px, 5vw, 72px);
+  padding-inline: var(--gutter);
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(0, 209, 209, 0.05), transparent 60%),
+    var(--ink);
+  border-top: 1px solid var(--line);
 }
-.brand-grid .brand-chip { width: auto; height: 104px; }
-
-/* ---------- flavour explorer ---------- */
-.fx-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+.wall-head { max-width: 46ch; margin-bottom: clamp(26px, 3vw, 40px); }
+.wall-head h2 {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 9vw, 7.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
   margin-bottom: 18px;
 }
-.fx-tab {
+.wall-head p { color: var(--muted); font-size: 1.02rem; max-width: 44ch; }
+
+/* ---------- filters ---------- */
+.wall-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: clamp(24px, 3vw, 40px);
+}
+.wall-chip {
+  font: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+.wall-chip em {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.68rem;
+  color: var(--muted-2);
+}
+.wall-chip:hover { color: var(--white); border-color: var(--white); }
+.wall-chip.is-active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #04262a;
+}
+.wall-chip.is-active em { color: rgba(4, 38, 42, 0.65); }
+
+/* ---------- tiles ---------- */
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(46%, 158px), 1fr));
+  gap: clamp(4px, 0.6vw, 12px);
+}
+.tile {
+  --glow: var(--teal);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  padding: 22px 10px 18px;
+  border-radius: 14px;
+  transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+/* The lamp behind each device. Always faintly on, so the wall reads as lit
+   rather than as a grid of cutouts; it comes up on approach. */
+.tile-lamp {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    58% 46% at 50% 36%,
+    color-mix(in srgb, var(--glow) 42%, transparent),
+    transparent 72%
+  );
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+}
+.tile:hover { transform: translateY(-6px); }
+.tile:hover .tile-lamp,
+.tile:focus-visible .tile-lamp { opacity: 0.85; }
+.tile:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+.tile-shot {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+/* The ratio lives on the image, not the wrapper. Put `aspect-ratio` on the
+   wrapper and `height: 100%` on the image and the two size off each other —
+   the wrapper has no definite height to resolve against, so it falls back to
+   the image's natural height and tall devices overflow into the label below. */
+.tile-shot img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.6));
+}
+/* Renders whose background could not be separated keep a rectangle. Framing
+   them makes that read as a deliberate photo rather than a failed cutout. */
+.tile.is-scene .tile-shot {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.tile.is-scene .tile-shot img { object-fit: cover; filter: none; }
+
+.tile-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--white);
+}
+.tile-brand {
+  font-size: 0.7rem;
+  color: var(--muted-2);
+  line-height: 1.3;
+}
+.tile-puffs {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--muted-2);
+  margin-top: 4px;
+}
+
+.wall-foot {
+  margin-top: clamp(28px, 3vw, 44px);
+  color: var(--muted-2);
+  font-size: 0.86rem;
+}
+.wall-foot b { font-family: var(--font-mono); color: var(--white); font-weight: 700; }
+.wall-foot a { color: var(--teal); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ==========================================================================
+   BRAND RAIL — deliberately a footnote
+   Brands are how suppliers organise the world, not how customers shop.
+   ========================================================================== */
+.rail {
+  padding-block: clamp(34px, 4vw, 56px);
+  border-top: 1px solid var(--line);
+  background: var(--ink-2);
+}
+.rail-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(20px, 3vw, 48px);
+}
+.rail h2 {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: none;
+}
+.rail h2 span {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--muted-2);
+}
+.rail-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(18px, 2.6vw, 40px);
+  flex: 1;
+}
+.rail-marks img {
+  height: 20px;
+  width: auto;
+  opacity: 0.42;
+  filter: grayscale(1);
+  transition: opacity 0.22s, filter 0.22s;
+}
+.rail-marks a:hover img,
+.rail-marks a:focus-visible img { opacity: 1; filter: none; }
+.rail-marks a:focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; }
+
+/* ==========================================================================
+   OPEN NOW — the only other thing allowed to be alive on the page
+   ========================================================================== */
+.open-now {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-  background: var(--ink-3);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 10px 18px;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
 }
-.fx-tab em {
-  font-style: normal;
-  font-size: 0.7rem;
-  color: var(--muted-2);
-  border-left: 1px solid var(--line);
-  padding-left: 9px;
+.open-now i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted-2);
+  flex: none;
 }
-.fx-tab:hover { color: var(--white); border-color: rgba(0, 209, 209, 0.45); }
-.fx-tab.is-active {
-  color: #05262a;
+.open-now b { color: var(--muted); font-weight: 700; }
+.open-now.is-open i {
   background: var(--teal);
-  border-color: var(--teal);
+  box-shadow: 0 0 0 0 rgba(0, 209, 209, 0.7);
+  animation: pulse 2.4s ease-out infinite;
 }
-.fx-tab.is-active em { color: rgba(5, 38, 42, 0.65); border-left-color: rgba(5, 38, 42, 0.25); }
-.fx-blurb { text-align: center; color: var(--muted); font-size: 0.92rem; margin-bottom: 32px; }
-.fx-more { text-align: center; margin-top: 28px; color: var(--muted); font-size: 0.88rem; }
-.fx-more a { color: var(--teal); font-weight: 700; }
-.fx-more a:hover { text-decoration: underline; }
-
-@media (max-width: 1100px) {
-  .brand-grid { grid-template-columns: repeat(4, 1fr); }
-}
-@media (max-width: 960px) {
-  .brand-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 620px) {
-  .brand-grid { grid-template-columns: repeat(2, 1fr); }
-  .fx-tabs { justify-content: flex-start; }
+.open-now.is-open b { color: var(--teal); }
+@keyframes pulse {
+  70% { box-shadow: 0 0 0 8px rgba(0, 209, 209, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 209, 209, 0); }
 }
 
 /* ==========================================================================
-   Fluid-width refinements
-   The shell is fluid (see --page-max / --gutter), so these blocks only tune
-   how many tracks each grid gets and how the chrome behaves at the extremes.
+   VISIT — calm again after the wall
    ========================================================================== */
+.visit {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--line);
+}
+.visit-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: clamp(32px, 6vw, 100px);
+  align-items: start;
+}
+.visit-say h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.visit-say p { color: var(--muted); max-width: 42ch; margin-bottom: 22px; }
+/* .open-now is inline-flex so it can sit inside a line of text elsewhere.
+   Here it needs its own line, or the button that follows shares it. */
+.visit-state { display: flex; width: fit-content; margin-bottom: 24px; }
+.visit-say .btn { display: inline-flex; }
 
-/* ---------- large desktops ---------- */
-@media (min-width: 1400px) {
-  .brand-grid { grid-template-columns: repeat(6, 1fr); }
-  .main-nav { gap: 44px; }
+.visit-facts {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.visit-facts > div { background: var(--ink); padding: 18px 22px; }
+.visit-facts dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-bottom: 8px;
+}
+.visit-facts dt svg { width: 13px; height: 13px; fill: var(--muted-2); }
+.visit-facts dd { font-size: 0.95rem; line-height: 1.5; }
+.visit-facts dd a { color: var(--white); }
+.visit-facts dd a:hover { color: var(--teal); }
+.visit-facts .hours { display: grid; gap: 5px; }
+.visit-facts .hours span { display: flex; justify-content: space-between; gap: 18px; }
+.visit-facts .hours i { font-style: normal; color: var(--muted); font-size: 0.86rem; }
+.visit-facts .hours b {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--white);
 }
 
-/* ---------- ultrawide: keep filling the screen instead of capping out ---------- */
-@media (min-width: 1900px) {
-  :root {
-    --page-max: 90vw;
-    --gutter: clamp(56px, 3vw, 104px);
-  }
-  .brand-grid { grid-template-columns: repeat(7, 1fr); }
-  .hero-copy { max-width: 720px; }
+@media (max-width: 900px) {
+  .visit-inner { grid-template-columns: 1fr; }
 }
 
-/* ---------- tablets: header + strip need room before the burger kicks in ---------- */
-@media (max-width: 1100px) {
-  .warning-strip { font-size: 0.68rem; }
-  .warning-strip .msg { text-align: center; }
+/* Renders are cut out now, so a tile box would only reintroduce the edge the
+   knockout removed. */
+.p-thumb.has-render { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .tile-lamp, .rail-marks img { transition: none; }
+  .tile:hover { transform: none; }
+  .open-now.is-open i { animation: none; }
 }
 
-/* ---------- phones ---------- */
-@media (max-width: 620px) {
-  .warning-strip .container { gap: 10px; }
-  .warning-strip .loc { white-space: normal; }
-  .hero .lede { font-size: 1.05rem; }
-  .visit .container,
-  .contact-grid,
-  .site-footer .top { grid-template-columns: 1fr; }
-  .series-head .chips { flex-wrap: wrap; }
+/* ---------- the wall, narrow ---------- */
+@media (max-width: 700px) {
+  /* At 390px the grid already falls to two columns on its own
+     (390 − 32 gutters = 358; min(46%, 158px) = 158 → two fit). These rules
+     only tighten what the smaller tile needs. */
+  .wall-head h2 { font-size: clamp(2.8rem, 15vw, 4.4rem); }
+  .wall-filters { gap: 6px; }
+  .wall-chip { padding: 8px 12px; font-size: 0.76rem; }
+  .tile { padding: 14px 6px 12px; }
+  .tile-name { font-size: 0.8rem; }
+  .rail-inner { gap: 18px; }
+  .rail-marks { gap: 20px 26px; }
 }
-
-@media (max-width: 460px) {
-  .btn { padding: 13px 18px; font-size: 0.82rem; }
-  .hero-actions { flex-direction: column; align-items: stretch; }
-  .hero-actions .btn { justify-content: center; }
-  .flavour-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .brand-grid { grid-template-columns: repeat(2, 1fr); }
-  .logo img { height: 44px; width: auto; }
-  .warning-strip .msg { font-size: 0.62rem; }
-  .section-foot .btn { width: 100%; justify-content: center; margin-bottom: 10px; }
-  .brand-hero-logo { width: 140px; height: 84px; }
-  .f-card .body { padding: 13px 14px 15px; }
-}
-
-/* Nothing should push the page sideways. `clip` rather than `hidden` so the
-   sticky header keeps working — `hidden` would turn body into a scroll box. */
-body { overflow-x: clip; }

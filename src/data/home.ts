@@ -7,6 +7,7 @@
 import { BRANDS } from "@/data/catalog";
 import { SERIES } from "@/data/products";
 import { RENDERS } from "@/data/renders";
+import { GLOW, SCENES } from "@/data/glow";
 import { STORE } from "@/data/store";
 
 const BRAND_NAME: Record<string, string> = Object.fromEntries(
@@ -286,3 +287,47 @@ export const WEEK: (DayHours | null)[] = (() => {
   }
   return week;
 })();
+
+/* ------------------------------------------------------------------- wall */
+
+export type WallItem = ShelfItem & {
+  render: string;
+  /** Profile slugs this flavour matched — the wall filters on membership. */
+  profiles: string[];
+  /** Colour sampled from the render, used to light the tile. */
+  glow?: string;
+  /** True when the render still has a photographic background. */
+  scene: boolean;
+};
+
+const SCENE_SET = new Set(SCENES);
+
+/**
+ * Every flavour we have a picture of, tagged with the profiles it belongs to.
+ *
+ * The home page shows the whole wall rather than a sample of it: the shop's
+ * defining object is the lit grid of devices behind the counter, and a
+ * tabbed widget showing eight of them is a fragment, not the thing. Profiles
+ * are resolved here because their RegExps cannot cross into a client
+ * component — the browser filters on the resulting slugs.
+ */
+export const WALL: WallItem[] = SHELF.filter(
+  (i): i is ShelfItem & { render: string } => Boolean(i.render),
+).map((item) => ({
+  ...item,
+  profiles: PROFILE_DEFS.filter((p) =>
+    p.test.test([item.flavour, item.badge, item.note].filter(Boolean).join(" ")),
+  ).map((p) => p.slug),
+  glow: GLOW[item.render],
+  scene: SCENE_SET.has(item.render),
+}));
+
+/** Filters for the wall, counted against what is actually on it. */
+export const WALL_FILTERS = [
+  { slug: "all", label: "Everything", count: WALL.length },
+  ...PROFILE_DEFS.map((p) => ({
+    slug: p.slug,
+    label: p.label,
+    count: WALL.filter((i) => i.profiles.includes(p.slug)).length,
+  })).filter((f) => f.count >= MIN_PROFILE_SIZE),
+];
