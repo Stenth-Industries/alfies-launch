@@ -21,8 +21,10 @@
   --page-max: 1760px;
   --gutter: clamp(16px, 3.4vw, 64px);
   --section-y: clamp(52px, 6.2vw, 96px);
-  /* Warning strip + sticky header — the hero fills what is left of the viewport. */
-  --header-h: 132px;
+  /* The prescribed health warning is at least 20% of the first screen (VPPR
+     s. 14) and the sticky header sits under it; the hero fills what is left. */
+  --warning-h: 20vh;
+  --header-h: 92px;
   --font-body: var(--font-archivo), "Segoe UI", Arial, sans-serif;
 }
 
@@ -49,34 +51,79 @@ ul { list-style: none; }
   padding-inline: var(--gutter);
 }
 
-/* ---------- warning strip ---------- */
-.warning-strip {
-  background: #000;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 8px 0;
+/* ---------- prescribed health warning (VPPR) ---------- */
+/* Every value in here is fixed by regulation rather than chosen: black on
+   white, standard sans serif, bordered, attributed, and at least a fifth of the
+   first screen. It deliberately ignores the site's dark palette — s. 21 sets
+   the colour, so this block looking like it belongs to a different site is the
+   point. See HealthWarning.tsx for the section numbers. */
+.health-warning {
+  /* s. 14 — the floor on the display area, measured from the top edge down. */
+  --hw-area: 20vh;
+  background: #fff;
+  color: #000;
+  /* s. 21 — a standard sans serif, not the site's display face, and no
+     tracking, condensing or expanding. */
+  font-family: Arial, Helvetica, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  padding: clamp(8px, 1.2vw, 16px);
 }
-.warning-strip .container {
+.hw-primary { min-height: var(--hw-area); display: flex; }
+.hw-frame {
+  flex: 1;
+  /* s. 17(2) — uniform border, 3% of the shortest side of the display area.
+     The block is always wider than it is tall, so the height is that side. */
+  border: solid #000;
+  border-width: max(2px, calc(var(--hw-area) * 0.03));
+  /* s. 19 — the warning takes 60–70% of the display area. The rows carry the
+     split; the border and padding sit inside the bordered area and count
+     against it, which is why both are kept tight. Measured in the browser at
+     61–65% rather than assumed. */
+  display: grid;
+  grid-template-rows: 70fr 30fr;
+  align-items: stretch;
+  /* Vertical padding kept tight on purpose: it sits inside the border, so it
+     counts against the display area the 60% is measured on. */
+  padding: clamp(2px, 0.4vh, 6px) clamp(12px, 3vw, 40px);
+}
+.hw-text {
+  /* s. 19 wants the warning itself to fill 60–70% of the display area, which
+     makes the type size a consequence rather than a choice: the block is 20vh
+     tall, so the text is sized off vh to fill its row, and capped against vw so
+     it still fits the line on a narrow screen. The measure forces a wrap on
+     wide viewports — one long line would leave the row two-thirds empty and
+     miss the 60% floor. Verified against .hw-frame at 320px and 1500px. */
+  /* The warning's box *is* its 70% share of the area inside the border — it
+     fills the row rather than floating in the middle of it, so the proportion
+     holds at every viewport instead of drifting with how many lines the
+     sentence happens to wrap to. The glyphs centre inside that box. */
+  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: center;
+  text-align: center;
+  /* Sized off the viewport height, since that is what the 20% block is sized
+     off, and capped against the width so a narrow screen still fits the line. */
+  font-size: clamp(0.85rem, min(4.2vh, 6.2vw), 2.4rem);
+  line-height: 1.18;
+  font-weight: 500;
 }
-.warning-strip .loc {
-  color: var(--teal);
-  font-weight: 600;
-  white-space: nowrap;
+.hw-text span { max-width: 34ch; }
+/* s. 21 — first word upper case (in the data) and bold. */
+.hw-text strong { font-weight: 700; }
+/* s. 22 — attribution. */
+.hw-attribution {
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  font-size: clamp(0.7rem, min(1.6vh, 2.4vw), 1.05rem);
+  font-weight: 700;
 }
-.warning-strip .msg { color: rgba(255,255,255,0.85); text-align: center; flex: 1; }
-.warning-strip .socials { display: flex; gap: 12px; }
-.warning-strip .socials a { opacity: 0.8; transition: opacity 0.2s; display: flex; }
-.warning-strip .socials a:hover { opacity: 1; }
-.warning-strip svg { width: 15px; height: 15px; fill: currentColor; }
+/* The footer restatement: same prescribed format, no 20% floor — s. 14 is
+   about the surface visible at first sight, which the footer is not. */
+.hw-repeat { --hw-area: 92px; }
+.hw-repeat .hw-frame { min-height: var(--hw-area); }
 
 /* ---------- header ---------- */
 .site-header {
@@ -167,15 +214,25 @@ ul { list-style: none; }
   position: relative;
   overflow: hidden;
   background: #000;
-  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100vh - var(--header-h) - var(--warning-h));
+  /* Column, not row: the copy and the actions are two separate children so the
+     narrow-screen rules can slot the photo between them. Centred as a group,
+     which is what `align-items: center` did back when there was one child. */
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(40px, 4.6vw, 84px);
 }
 .hero-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   display: grid;
+  /* An explicit row, not the implicit `auto` one: a percentage height on a grid
+     item only resolves against a definite area, so with an auto row the photo
+     fell back to its intrinsic height, outgrew the hero and got cover-cropped
+     by `overflow: hidden` — the exact crop this whole block exists to avoid. */
+  grid-template-rows: 100%;
   /* Pushed to the right so the lineup starts clear of the headline rather than
      sitting under it — the slack left over by the contained fit becomes the
      dark ground the copy reads against. */
@@ -205,10 +262,11 @@ ul { list-style: none; }
   background: linear-gradient(to right, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.5) 34%, rgba(0,0,0,0.12) 58%, transparent 78%);
   pointer-events: none;
 }
+/* The block padding now lives on .hero itself — with two containers stacked,
+   putting it here would apply it twice and double the hero's dead space. */
 .hero .container {
   position: relative;
   z-index: 1;
-  padding-block: clamp(40px, 4.6vw, 84px);
 }
 .hero-copy { position: relative; z-index: 2; max-width: 680px; }
 .hero-tag {
@@ -224,7 +282,11 @@ ul { list-style: none; }
 }
 .hero-tag svg { width: 15px; height: 15px; fill: currentColor; }
 .hero h1 {
-  font-size: clamp(2.6rem, 5.4vw, 4.4rem);
+  /* The floor is capped against the viewport as well: "DESTINATION" is the
+     longest unbreakable word on the page and at a flat 2.6rem it ran off the
+     right edge of a 320-360px phone. 11vw keeps it inside the gutter there
+     and stops applying as soon as there is room for the full size. */
+  font-size: clamp(min(2.6rem, 11vw), 5.4vw, 4.4rem);
   font-weight: 900;
   line-height: 1.02;
   letter-spacing: -0.01em;
@@ -349,7 +411,15 @@ ul { list-style: none; }
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
 }
 .p-card .thumb { position: relative; aspect-ratio: 3 / 2; overflow: hidden; }
-.p-card .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+/* Anchored to the top: these covers carry the brand wordmark in the top-left,
+   so a centred crop shaves the one part of the art that identifies them. */
+.p-card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.4s;
+}
 .p-card:hover .thumb img { transform: scale(1.045); }
 .p-card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .p-card h3 { font-size: 1.25rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; }
@@ -871,6 +941,10 @@ html.dialog-open { overflow: hidden; }
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
 }
+.footer-socials { display: flex; gap: 14px; margin-top: 4px; }
+.footer-socials a { color: var(--muted); transition: color 0.2s; display: flex; }
+.footer-socials a:hover { color: var(--teal); }
+.footer-socials svg { width: 18px; height: 18px; fill: currentColor; }
 .footer-bottom {
   border-top: 1px solid var(--line);
   padding-block: 18px;
@@ -882,16 +956,38 @@ html.dialog-open { overflow: hidden; }
   color: var(--muted-2);
 }
 
+/* ---------- long-form pages (privacy, notices) ---------- */
+.prose { max-width: 68ch; margin-inline: auto; }
+.prose h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 34px 0 10px;
+}
+.prose h2:first-child { margin-top: 0; }
+.prose p { color: var(--muted); margin-bottom: 14px; }
+.prose a { color: var(--teal); font-weight: 600; }
+.prose a:hover { text-decoration: underline; }
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1px 6px;
+  color: var(--white);
+}
+
 /* ---------- age gate ---------- */
-.age-gate {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: rgba(5, 5, 6, 0.92);
-  backdrop-filter: blur(14px);
+/* A page, not an overlay. The gate is served by middleware in place of whatever
+   the visitor asked for, so there is nothing behind it to dim — the catalogue
+   was never sent. */
+.age-page {
+  min-height: 60vh;
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: clamp(28px, 6vw, 72px) var(--gutter);
 }
 .age-card {
   background: var(--ink-2);
@@ -904,23 +1000,64 @@ html.dialog-open { overflow: hidden; }
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
 }
 .age-card .logo { justify-content: center; margin-bottom: 26px; }
-.age-card h2 { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; }
-.age-card p { color: var(--muted); font-size: 0.92rem; margin-bottom: 28px; }
+.age-card h1 { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; }
+.age-card .age-lede { color: var(--muted); font-size: 0.92rem; margin-bottom: 28px; }
 .age-actions { display: flex; gap: 14px; justify-content: center; }
-.age-card .fine { font-size: 0.7rem; color: var(--muted-2); margin: 24px 0 0; }
+.age-card .fine { font-size: 0.7rem; color: var(--muted-2); margin: 24px 0 0; line-height: 1.5; }
+
+.age-form .dob { border: 0; margin-bottom: 22px; }
+.age-form legend {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-bottom: 12px;
+}
+.dob-row { display: flex; gap: 10px; justify-content: center; }
+.dob-row label { display: flex; flex-direction: column; gap: 6px; flex: 1; max-width: 120px; }
+.dob-row span {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.dob-row input {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--white);
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 8px;
+  width: 100%;
+}
+.dob-row input:focus-visible { outline: none; border-color: var(--teal); }
+.age-error {
+  color: #ff8a8a;
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
 
 /* ---------- responsive ---------- */
 @media (max-width: 960px) {
   /* Too narrow to read text over the photo — the copy stacks above it and the
      shot becomes a normal block in the flow, still whole. */
-  .hero { min-height: 0; flex-direction: column; align-items: stretch; }
-  .hero .container { order: 1; padding-block: clamp(40px, 7vw, 64px) 0; }
+  .hero { min-height: 0; align-items: stretch; padding-block: 0; }
+  .hero .hero-copy-col { order: 1; padding-block: clamp(28px, 5.5vw, 52px) 0; }
   .hero-copy { max-width: none; }
   .hero-bg {
     order: 2;
     position: relative;
     inset: auto;
-    padding: clamp(20px, 4vw, 36px) var(--gutter) clamp(28px, 5vw, 48px);
+    padding: clamp(20px, 4vw, 36px) var(--gutter) clamp(14px, 3vw, 26px);
+  }
+  /* Below the shot: you scroll past the lineup, then hit the buttons. */
+  .hero .hero-actions-col {
+    order: 3;
+    padding-bottom: clamp(26px, 5vw, 48px);
   }
   .hero-bg img { width: 100%; height: auto; }
   .hero-bg::after { display: none; }
@@ -952,13 +1089,59 @@ html.dialog-open { overflow: hidden; }
   .header-cta .btn { padding: 12px 14px; }
 }
 @media (max-width: 620px) {
+  /* Phone: claw back a little of the side gutter and the header's height —
+     at this width every pixel spent on chrome is one the copy doesn't get. */
+  :root { --gutter: 12px; }
+  .site-header .container { padding-block: 9px; }
+  /* The hero copy runs closer to the edge than the rest of the page — at this
+     width the headline needs every pixel it can get. */
+  .hero .container { padding-inline: 8px; }
+  /* Tighter leading. At this size the stock line spacing left a visible gap
+     between each headline line and inside the lede, which read as three
+     separate blocks rather than one piece of copy. */
+  .hero-tag { margin-bottom: 12px; }
+  .hero h1 { line-height: 0.94; }
+  .hero .lede { margin: 16px 0 22px; line-height: 1.34; }
+  /* The display headings inherit the body's 1.6 leading, which is far too airy
+     at this size, and the standfirst under them the same. */
+  .section-head { margin-bottom: clamp(22px, 4.5vw, 34px); }
+  .section-head .kicker { margin-bottom: 8px; }
+  .section-head h2 { line-height: 1.06; }
+  .section-head p { font-size: 0.88rem; line-height: 1.4; margin-top: 9px; }
+  /* Brand cards: the cover art was eating most of the screen, which made a
+     single card feel like a whole page. Shorter crop, tighter body. */
+  .card-grid { gap: 14px; }
+  /* 16/10 rather than 16/9 — still short, but it crops less off the art. */
+  .p-card .thumb { aspect-ratio: 16 / 10; }
+  .p-card .body { padding: 14px 16px 16px; gap: 7px; }
+  .p-card h3 { font-size: 1.05rem; }
+  .p-card .desc { font-size: 0.84rem; }
+  .p-card .chips span { font-size: 0.66rem; }
+  .p-card .foot { margin-top: 8px; padding-top: 11px; gap: 8px; }
+  /* Both halves on one line — they wrapped to two at the narrow end. */
+  .p-card .stock,
+  .p-card .link { font-size: 0.7rem; letter-spacing: 0.04em; white-space: nowrap; }
+  /* Two rows is enough of a taste — the rest is a tap away. */
+  .flavour-grid > :nth-child(n + 5) { display: none; }
+  /* Flavour cards: the padding was doing more work than the content. */
+  .f-card .body { padding: 10px 11px 12px; gap: 3px; }
+  .f-card h3 { font-size: 0.86rem; line-height: 1.2; }
+  .f-card .note { font-size: 0.72rem; }
+  .f-card .meta { padding-top: 6px; font-size: 0.63rem; }
+  .p-thumb.has-render { padding: 6px; }
+  /* Footer: Pages and Brands sit side by side; the intro and the address
+     block, which both run long, keep the full width. */
+  .site-footer .top {
+    grid-template-columns: 1fr 1fr;
+    gap: 26px 16px;
+  }
+  .site-footer .top > :first-child,
+  .site-footer .top > :last-child { grid-column: 1 / -1; }
+  .site-footer .about-txt { max-width: none; }
   .flavour-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .trust .container { grid-template-columns: 1fr; gap: 18px; }
   .card-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
-  .warning-strip .socials { display: none; }
-  .warning-strip .msg { text-align: right; }
-  .site-footer .top { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; text-align: center; }
   .age-actions { flex-direction: column; }
 }
@@ -974,45 +1157,71 @@ html.dialog-open { overflow: hidden; }
 }
 .brand-grid .brand-chip { width: auto; height: 104px; }
 
+/* Collapsed brand wall. Eleven logos run to five or six rows on a narrow
+   screen, which buries everything under it — so the grid is clamped to three
+   rows, the cut is faded out, and the "view all" button sits on the fade. */
+.brand-reveal { position: relative; }
+@media (max-width: 960px) {
+  .brand-reveal .brand-grid {
+    --rows: 3;
+    max-height: calc(
+      var(--rows) * 104px + (var(--rows) - 1) * clamp(12px, 1.4vw, 22px)
+    );
+    overflow: hidden;
+  }
+  .brand-reveal::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 170px;
+    background: linear-gradient(180deg, transparent, var(--ink) 70%);
+    pointer-events: none;
+  }
+  /* Pulled up onto the fade, and above it so the gradient doesn't wash it out. */
+  .brand-reveal .section-foot {
+    position: relative;
+    z-index: 2;
+    margin-top: -44px;
+  }
+}
+
 /* ---------- flavour explorer ---------- */
-.fx-tabs {
+/* A dropdown rather than a row of pills: the profile list is long enough that
+   the pills wrapped to three lines on a phone before the grid even started. */
+.fx-select-wrap {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
   margin-bottom: 18px;
 }
-.fx-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
+.fx-select {
   font-family: var(--font-body);
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--white);
   background: var(--ink-3);
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 10px 18px;
+  padding: 12px 44px 12px 20px;
+  min-width: min(100%, 300px);
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  appearance: none;
+  /* Chevron drawn in the padding well on the right. */
+  background-image: linear-gradient(45deg, transparent 50%, var(--teal) 50%),
+    linear-gradient(135deg, var(--teal) 50%, transparent 50%);
+  background-position: calc(100% - 22px) calc(50% + 1px),
+    calc(100% - 16px) calc(50% + 1px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  transition: border-color 0.2s, background-color 0.2s;
 }
-.fx-tab em {
-  font-style: normal;
-  font-size: 0.7rem;
-  color: var(--muted-2);
-  border-left: 1px solid var(--line);
-  padding-left: 9px;
-}
-.fx-tab:hover { color: var(--white); border-color: rgba(0, 209, 209, 0.45); }
-.fx-tab.is-active {
-  color: #05262a;
-  background: var(--teal);
-  border-color: var(--teal);
-}
-.fx-tab.is-active em { color: rgba(5, 38, 42, 0.65); border-left-color: rgba(5, 38, 42, 0.25); }
+.fx-select:hover,
+.fx-select:focus-visible { border-color: rgba(0, 209, 209, 0.5); }
+/* The native menu is drawn by the OS, so it needs its own colours. */
+.fx-select option { background: var(--ink-3); color: var(--white); }
 .fx-blurb { text-align: center; color: var(--muted); font-size: 0.92rem; margin-bottom: 32px; }
 .fx-more { text-align: center; margin-top: 28px; color: var(--muted); font-size: 0.88rem; }
 .fx-more a { color: var(--teal); font-weight: 700; }
@@ -1026,7 +1235,20 @@ html.dialog-open { overflow: hidden; }
 }
 @media (max-width: 620px) {
   .brand-grid { grid-template-columns: repeat(2, 1fr); }
-  .fx-tabs { justify-content: flex-start; }
+  /* Lives here rather than in the phone block above because the base .fx-blurb
+     rule is declared further down the sheet and would otherwise win. Two
+     balanced lines at a readable size: holding the longest blurb (63 chars) on
+     one line needs ~10px type on a 320px phone, which is smaller than any other
+     caption on the page. */
+  .fx-blurb {
+    font-size: 0.84rem;
+    line-height: 1.4;
+    text-wrap: balance;
+    margin-bottom: 20px;
+  }
+  /* Same story: declared after their base rules so they actually take. */
+  .fx-select-wrap { margin-bottom: 14px; }
+  .fx-more { margin-top: 18px; font-size: 0.8rem; }
 }
 
 /* ==========================================================================
@@ -1051,20 +1273,11 @@ html.dialog-open { overflow: hidden; }
   .hero-copy { max-width: 720px; }
 }
 
-/* ---------- tablets: header + strip need room before the burger kicks in ---------- */
-@media (max-width: 1100px) {
-  .warning-strip { font-size: 0.68rem; }
-  .warning-strip .msg { text-align: center; }
-}
-
 /* ---------- phones ---------- */
 @media (max-width: 620px) {
-  .warning-strip .container { gap: 10px; }
-  .warning-strip .loc { white-space: normal; }
   .hero .lede { font-size: 1.05rem; }
   .visit .container,
-  .contact-grid,
-  .site-footer .top { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
   .series-head .chips { flex-wrap: wrap; }
 }
 
@@ -1075,7 +1288,6 @@ html.dialog-open { overflow: hidden; }
   .flavour-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .brand-grid { grid-template-columns: repeat(2, 1fr); }
   .logo img { height: 44px; width: auto; }
-  .warning-strip .msg { font-size: 0.62rem; }
   .section-foot .btn { width: 100%; justify-content: center; margin-bottom: 10px; }
   .brand-hero-logo { width: 140px; height: 84px; }
   .f-card .body { padding: 13px 14px 15px; }

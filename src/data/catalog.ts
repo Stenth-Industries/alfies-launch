@@ -13,15 +13,14 @@ export type Brand = {
 
 /**
  * One card per brand. Cover art lives in /public/covers, wordmarks in
- * /public/brands. Level X has a logo but no cover art yet, so it appears in
- * the brand strip only.
+ * /public/brands.
  */
 export const BRANDS: Brand[] = [
   {
     slug: "elfbar",
     name: "Elfbar",
     tagline:
-      "The best-known name in disposables — big puff counts, smart displays and a huge flavour range.",
+      "A widely stocked disposable line — big puff counts, on-device displays and a wide flavour range.",
     cover: "/covers/elfbar.png",
     logo: "/brands/elfbar.png",
     highlights: ["Up to 25K puffs", "Battery + juice display", "Rechargeable"],
@@ -30,7 +29,7 @@ export const BRANDS: Brand[] = [
     slug: "flavour-beast",
     name: "Flavour Beast",
     tagline:
-      "Canadian favourite with bold, unapologetic flavours across disposables and pod systems.",
+      "Canadian brand carrying a wide flavour range across disposables and pod systems.",
     cover: "/covers/flavour-beast.png",
     logo: "/brands/f-b.png",
     highlights: ["Beast Mode line", "Loud flavours", "Pods + disposables"],
@@ -40,6 +39,7 @@ export const BRANDS: Brand[] = [
     name: "Level X",
     tagline:
       "Flavour Beast's closed-pod ecosystem — one battery, endless interchangeable flavour pods.",
+    cover: "/covers/level-x.png",
     logo: "/brands/level-x.png",
     highlights: ["Interchangeable pods", "Reusable battery", "Lower cost per puff"],
   },
@@ -47,7 +47,7 @@ export const BRANDS: Brand[] = [
     slug: "orbito",
     name: "Orbito",
     tagline:
-      "Sleek disposables with smooth draws and clean, true-to-name flavour profiles.",
+      "Slim disposables with smooth draws and true-to-name flavour profiles.",
     cover: "/covers/orbito.png",
     logo: "/brands/orbito.png",
     highlights: ["Smooth airflow", "Compact design", "High puff count"],
@@ -65,7 +65,7 @@ export const BRANDS: Brand[] = [
     slug: "oxbar",
     name: "Oxbar",
     tagline:
-      "Performance-first disposables known for punchy flavour and long-lasting batteries.",
+      "Disposables built around long battery life and a full-bodied draw.",
     cover: "/covers/oxbar.png",
     logo: "/brands/oxbar.png",
     highlights: ["Boost modes", "Long battery life", "Vivid flavours"],
@@ -74,7 +74,7 @@ export const BRANDS: Brand[] = [
     slug: "stlth",
     name: "STLTH",
     tagline:
-      "Canada's pod pioneer — dependable closed pods plus a strong disposable lineup.",
+      "One of the earliest closed-pod systems sold in Canada, plus a disposable lineup.",
     cover: "/covers/stlth.png",
     logo: "/brands/stlth.png",
     highlights: ["Closed pod system", "Canadian staple", "Wide availability"],
@@ -92,7 +92,7 @@ export const BRANDS: Brand[] = [
     slug: "vuse",
     name: "Vuse",
     tagline:
-      "The global #1 vape brand — ePod devices with a broad range of pre-filled pods.",
+      "ePod devices with a broad range of pre-filled pods.",
     cover: "/covers/vuse.png",
     logo: "/brands/vuse.png",
     highlights: ["ePod 2 system", "Pre-filled pods", "Global #1 brand"],
@@ -101,7 +101,7 @@ export const BRANDS: Brand[] = [
     slug: "z-pods",
     name: "Z Pods",
     tagline:
-      "STLTH-compatible pods in flavours you won't find anywhere else, at a great price.",
+      "STLTH-compatible pods with a flavour range of their own.",
     cover: "/covers/z-pods.png",
     logo: "/brands/z-pods.png",
     highlights: ["STLTH compatible", "Unique flavours", "Great value"],
@@ -115,6 +115,5 @@ export const PRODUCT_BRANDS = BRANDS.filter(
 
 /**
  * Brands with a transcribed lineup, which is what the Products grid links into.
- * Level X has no cover art yet, so its card falls back to a placeholder thumb.
  */
 export const BROWSABLE_BRANDS = BRANDS.filter((b) => SERIES[b.slug]?.length);

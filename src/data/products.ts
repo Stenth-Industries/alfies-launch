@@ -122,7 +122,7 @@ export const SERIES: Record<string, Series[]> = {
       name: "Beast Mode Max 2 — Gushin Series",
       puffs: "50,000 puffs",
       format: "5 × 20 mL",
-      blurb: "Candy-forward collaboration flavours in the Gushin artwork.",
+      blurb: "Collaboration flavours in the Gushin artwork.",
       products: [
         { name: "Blue Razz" },
         { name: "Watermelon Apple" },

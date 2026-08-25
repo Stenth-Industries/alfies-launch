@@ -169,6 +169,15 @@ const MIN_PROFILE_SIZE = 4;
  * Flavours are matched by name, so "Blue Razz Ice" legitimately lands in both
  * Berry and Iced. That mirrors how the boxes are actually labelled — these are
  * browsing shortcuts, not exclusive categories.
+ *
+ * COMPLIANCE: a facet label and its blurb are the site speaking in its own
+ * voice, and TVPA s. 30.48 with Schedule 3 prohibits any indication — brand
+ * elements included — that a vaping product has a confectionery, dessert,
+ * cannabis, soft drink or energy drink flavour. So there is no Dessert facet,
+ * no Drinks facet, and nothing here says "candy". The regexes may still match
+ * a manufacturer's candy-named line, because grouping a product is not the
+ * same as advertising the flavour category; the label the visitor reads is.
+ * Adding a facet? Check it against Schedule 3 first.
  */
 const PROFILE_DEFS: FlavourProfile[] = [
   {
@@ -191,9 +200,9 @@ const PROFILE_DEFS: FlavourProfile[] = [
   },
   {
     slug: "sour",
-    label: "Sour & Candy",
-    blurb: "Sharp, sweet and loud — the gushers end of the shelf.",
-    test: /sour|gushin|candy|blast|bomb|killa/i,
+    label: "Sour & Sharp",
+    blurb: "The sharp end of the wall, where the fruit bites back.",
+    test: /sour|gushin|blast|bomb|killa/i,
   },
   {
     slug: "tobacco",

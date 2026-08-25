@@ -26,7 +26,7 @@ export default function HeroSection() {
           priority
         />
       </div>
-      <div className="container">
+      <div className="container hero-copy-col">
         <div className="hero-copy">
           <span className="hero-tag">
             <PinIcon />
@@ -36,19 +36,25 @@ export default function HeroSection() {
             Your local <span className="accent">vape destination.</span>
           </h1>
           <p className="lede">
-            Quality products. Great selection. Friendly service. That&apos;s the{" "}
-            <strong>Alfie&apos;s</strong> way.
+            A specialty vape store in {STORE.city}. Wide selection, staff who
+            know the stock, and {STORE.minimumAge}+ with photo ID at the
+            door.
           </p>
-          <div className="hero-actions">
-            <Link href="/products" className="btn btn-solid">
-              <BagIcon />
-              Explore Products
-            </Link>
-            <a href={STORE.phoneHref} className="btn btn-outline">
-              <PhoneIcon />
-              Call {STORE.phone}
-            </a>
-          </div>
+        </div>
+      </div>
+      {/* A sibling of the copy rather than a child of it, so the narrow-screen
+          rules can `order` it below the photo — the buttons are the last thing
+          you reach on a phone, after you have seen the shot. */}
+      <div className="container hero-actions-col">
+        <div className="hero-actions">
+          <Link href="/products" className="btn btn-solid">
+            <BagIcon />
+            Explore Products
+          </Link>
+          <a href={STORE.phoneHref} className="btn btn-outline">
+            <PhoneIcon />
+            Call {STORE.phone}
+          </a>
         </div>
       </div>
     </section>
