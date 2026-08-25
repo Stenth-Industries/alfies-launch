@@ -254,7 +254,7 @@ function parseTime(raw: string): number | null {
 }
 
 /**
- * STORE.hours is written for humans ("Monday – Friday", "10:00 AM – 9:00 PM").
+ * STORE.hours is written for humans ("Monday – Thursday", "8:00 AM – 10:00 PM").
  * This turns it into a lookup by weekday so the page can say whether the shop
  * is open right now. Anything unparseable stays `null` and the caller renders
  * nothing rather than guessing.
@@ -267,17 +267,21 @@ export const WEEK: (DayHours | null)[] = (() => {
     const close = parseTime(closeRaw ?? "");
     if (open === null || close === null) continue;
 
-    const parts = entry.days
-      .split(/\s*[–—-]\s*/)
-      .map((d) => d.trim().toLowerCase());
-    const from = DAY_INDEX[parts[0]];
-    if (from === undefined) continue;
-    const to = parts[1] !== undefined ? DAY_INDEX[parts[1]] : from;
-    if (to === undefined) continue;
+    // A dash means a range ("Monday – Thursday"); "&", "and" or a comma names
+    // each day on its own ("Friday & Saturday").
+    for (const segment of entry.days.split(/\s*(?:&|,)\s*|\s+and\s+/i)) {
+      const parts = segment
+        .split(/\s*[–—-]\s*/)
+        .map((d) => d.trim().toLowerCase());
+      const from = DAY_INDEX[parts[0]];
+      if (from === undefined) continue;
+      const to = parts[1] !== undefined ? DAY_INDEX[parts[1]] : from;
+      if (to === undefined) continue;
 
-    for (let i = from; ; i = (i + 1) % 7) {
-      week[i] = { open, close, label: entry.time };
-      if (i === to) break;
+      for (let i = from; ; i = (i + 1) % 7) {
+        week[i] = { open, close, label: entry.time };
+        if (i === to) break;
+      }
     }
   }
   return week;

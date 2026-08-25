@@ -1,6 +1,6 @@
 /**
- * Store details. Items marked TODO need Alfie's real information before
- * launch — the phone number and address in particular.
+ * Store details. Address, phone and hours are Alfie's real information.
+ * Items marked TODO still need confirming before launch.
  */
 export const STORE = {
   name: "Alfie's",
@@ -9,20 +9,20 @@ export const STORE = {
   province: "Ontario",
   provinceShort: "ON",
 
-  // TODO: confirm with Alfie before launch
-  phone: "(705) 555-0142",
-  phoneHref: "tel:+17055550142",
-  address: "000 Dunlop Street East",
-  postalCode: "L4M 0A0",
-  email: "hello@alfiesvape.ca",
+  phone: "(705) 739-9990",
+  phoneHref: "tel:+17057399990",
+  address: "201 Cundles Rd East",
+  postalCode: "L4M 4S5",
 
+  // TODO: confirm with Alfie before launch
+  email: "hello@alfiesvape.ca",
   instagram: "https://instagram.com",
   facebook: "https://facebook.com",
 
   hours: [
-    { days: "Monday – Friday", time: "10:00 AM – 9:00 PM" },
-    { days: "Saturday", time: "10:00 AM – 9:00 PM" },
-    { days: "Sunday", time: "11:00 AM – 6:00 PM" },
+    { days: "Monday – Thursday", time: "8:00 AM – 10:00 PM" },
+    { days: "Friday & Saturday", time: "8:00 AM – 11:00 PM" },
+    { days: "Sunday", time: "8:00 AM – 8:00 PM" },
   ],
 
   /** Legal vaping age in Ontario is 19. */

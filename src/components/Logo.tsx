@@ -2,8 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { STORE } from "@/data/store";
 
-/** Intrinsic size of public/logo-light.png, used to derive width from height. */
-const RATIO = 1749 / 877;
+/**
+ * Intrinsic size of public/logo-light.png, used to derive width from height.
+ * Keep it in step with the artwork — `node scripts/knockout-logo.mjs` prints
+ * the trimmed dimensions, and a stale ratio here stretches the wordmark.
+ */
+const RATIO = 1211 / 832;
 
 type Props = {
   /** Rendered height in px; width follows the artwork's aspect ratio. */

@@ -15,6 +15,12 @@
   --muted: rgba(255, 255, 255, 0.62);
   --muted-2: rgba(255, 255, 255, 0.4);
   --radius: 16px;
+  /* Fluid page shell — content stretches with the viewport instead of sitting
+     in a fixed 1180px column. Gutters grow with the screen so wide monitors
+     get breathing room without the layout collapsing into a narrow strip. */
+  --page-max: 1760px;
+  --gutter: clamp(16px, 3.4vw, 64px);
+  --section-y: clamp(52px, 6.2vw, 96px);
   /* Warning strip + sticky header — the hero fills what is left of the viewport. */
   --header-h: 132px;
   --font-body: var(--font-archivo), "Segoe UI", Arial, sans-serif;
@@ -36,7 +42,12 @@ img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
-.container { width: min(1180px, 92%); margin-inline: auto; }
+.container {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
 
 /* ---------- warning strip ---------- */
 .warning-strip {
@@ -79,8 +90,8 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 14px 0;
+  gap: clamp(12px, 2vw, 32px);
+  padding-block: 14px;
 }
 
 .logo { display: flex; align-items: center; flex: none; }
@@ -135,7 +146,7 @@ ul { list-style: none; }
   color: #05262a;
   box-shadow: 0 6px 24px rgba(0, 209, 209, 0.3);
 }
-.btn-solid:hover { transform: translateY(-2px); background: var(--aqua); box-shadow: 0 10px 30px rgba(92, 229, 230, 0.4); }
+.btn-solid:hover { transform: translateY(-3px) scale(1.02); background: var(--aqua); box-shadow: 0 12px 34px rgba(92, 229, 230, 0.45); }
 .btn-outline {
   border-color: var(--teal);
   color: var(--white);
@@ -146,65 +157,60 @@ ul { list-style: none; }
 .btn-sm { padding: 10px 18px; font-size: 0.8rem; }
 
 /* ---------- hero ---------- */
-/* Full-bleed image on the right, fading into the page black on the left and
-   bottom — matches the reference landing design. */
-/* The section fills the viewport below the warning strip + header, so the
-   image sits entirely inside it and never runs behind the nav. */
+/* Full-bleed shot behind the copy, *contained* rather than cover-cropped: the
+   source is 1536px wide, so covering a 1920px viewport would upscale it 1.25x
+   and slice the neon sign and the countertop off the top and bottom. Contained
+   it never enlarges past its natural scale and the whole frame stays visible.
+   The photo's surround is near-black, so the space either side of it reads as
+   page background; the edges are feathered so there is no seam where it ends. */
 .hero {
   position: relative;
   overflow: hidden;
-  background: var(--ink);
+  background: #000;
   min-height: calc(100vh - var(--header-h));
   display: flex;
   align-items: center;
 }
 .hero-bg {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 58%;
-  pointer-events: none;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  /* Pushed to the right so the lineup starts clear of the headline rather than
+     sitting under it — the slack left over by the contained fit becomes the
+     dark ground the copy reads against. */
+  place-items: center end;
 }
 .hero-bg img {
-  width: 100%;
+  /* height-led so the element box *is* the fitted photo — that keeps the mask
+     below on the picture's real edges instead of on empty letterbox. */
   height: 100%;
-  object-fit: cover;
-  object-position: center right;
-  /* Fade lives on the left edge only — masked into the image so there is no seam. */
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.4) 16%,
-    rgba(0, 0, 0, 0.85) 32%,
-    #000 46%
-  );
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.4) 16%,
-    rgba(0, 0, 0, 0.85) 32%,
-    #000 46%
-  );
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%),
+    linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%),
+    linear-gradient(180deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+  mask-composite: intersect;
 }
-.hero-bg::before {
+/* A slight overlay so the text remains readable over the vapes if they overlap on small screens */
+.hero-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    var(--ink) 0%,
-    rgba(15, 15, 16, 0.55) 18%,
-    rgba(15, 15, 16, 0.15) 38%,
-    transparent 56%
-  );
+  background: linear-gradient(to right, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.5) 34%, rgba(0,0,0,0.12) 58%, transparent 78%);
+  pointer-events: none;
 }
 .hero .container {
   position: relative;
   z-index: 1;
-  padding: 88px 0 96px;
+  padding-block: clamp(40px, 4.6vw, 84px);
 }
-.hero-copy { max-width: 600px; }
+.hero-copy { position: relative; z-index: 2; max-width: 680px; }
 .hero-tag {
   display: inline-flex;
   align-items: center;
@@ -229,7 +235,7 @@ ul { list-style: none; }
   margin: 26px 0 36px;
   font-size: 1.15rem;
   color: var(--muted);
-  max-width: 44ch;
+  max-width: 52ch;
 }
 .hero .lede strong { color: var(--teal); font-weight: 600; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 16px; }
@@ -238,9 +244,9 @@ ul { list-style: none; }
 .trust { border-block: 1px solid var(--line); background: var(--ink-2); }
 .trust .container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  padding: 34px 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: clamp(18px, 2vw, 32px);
+  padding-block: clamp(26px, 3vw, 40px);
 }
 .trust-item { display: flex; gap: 16px; align-items: flex-start; }
 .trust-item .ico {
@@ -258,9 +264,13 @@ ul { list-style: none; }
 .trust-item p { font-size: 0.88rem; color: var(--muted); }
 
 /* ---------- sections ---------- */
-.section { padding: 84px 0; }
+.section { padding-block: var(--section-y); }
 .section-alt { background: var(--ink-2); border-block: 1px solid var(--line); }
-.section-head { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+.section-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto clamp(32px, 3.4vw, 52px);
+}
 .section-head .kicker {
   color: var(--teal);
   font-weight: 700;
@@ -319,8 +329,10 @@ ul { list-style: none; }
 /* ---------- product / brand cards ---------- */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  /* auto-fit so the row fills the width at any size: more columns on a wide
+     monitor, and a short row (the 3 home favourites) still spans the page. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: clamp(18px, 2vw, 32px);
 }
 .p-card {
   background: var(--ink-3);
@@ -451,7 +463,7 @@ ul { list-style: none; }
 }
 
 /* ---------- series + flavour cards ---------- */
-.series { padding: 62px 0; }
+.series { padding-block: clamp(44px, 5vw, 76px); }
 .series-head {
   display: flex;
   align-items: flex-end;
@@ -482,8 +494,8 @@ ul { list-style: none; }
 
 .flavour-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 215px), 1fr));
+  gap: clamp(14px, 1.5vw, 26px);
 }
 .f-card {
   background: var(--ink-3);
@@ -532,8 +544,8 @@ ul { list-style: none; }
 /* ---------- visit strip ---------- */
 .visit .container {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(28px, 4vw, 72px);
   align-items: center;
 }
 .visit h2 { font-size: clamp(1.8rem, 3.2vw, 2.5rem); font-weight: 900; text-transform: uppercase; margin-bottom: 16px; }
@@ -565,7 +577,7 @@ ul { list-style: none; }
 
 /* ---------- page hero (inner pages) ---------- */
 .page-hero {
-  padding: 64px 0 56px;
+  padding-block: clamp(44px, 5.4vw, 84px) clamp(40px, 4.6vw, 72px);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -595,15 +607,15 @@ ul { list-style: none; }
 /* ---------- contact page ---------- */
 .contact-grid {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 40px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(24px, 3vw, 56px);
   align-items: start;
 }
 .contact-panel {
   background: var(--ink-3);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 34px;
+  padding: clamp(20px, 2.4vw, 38px);
 }
 .contact-panel h2 { font-size: 1.4rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
 .contact-panel > p { color: var(--muted); font-size: 0.95rem; margin-bottom: 26px; }
@@ -655,15 +667,15 @@ ul { list-style: none; }
   border: 1px solid var(--line);
   filter: grayscale(0.2) contrast(1.02);
 }
-.map-wrap iframe { display: block; width: 100%; height: 380px; border: 0; }
+.map-wrap iframe { display: block; width: 100%; height: clamp(300px, 46vh, 560px); border: 0; }
 
 /* ---------- footer ---------- */
 .site-footer { background: #0a0a0b; border-top: 1px solid var(--line); }
 .site-footer .top {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
-  gap: 40px;
-  padding: 56px 0 44px;
+  grid-template-columns: minmax(240px, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: clamp(28px, 3vw, 56px);
+  padding-block: clamp(40px, 4vw, 64px) clamp(32px, 3vw, 48px);
 }
 .site-footer h4 {
   font-size: 0.78rem;
@@ -688,7 +700,7 @@ ul { list-style: none; }
 }
 .footer-bottom {
   border-top: 1px solid var(--line);
-  padding: 18px 0;
+  padding-block: 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -726,23 +738,19 @@ ul { list-style: none; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 960px) {
-  .hero { min-height: 0; }
-  .hero .container { padding: 64px 0 72px; }
-  /* Too narrow to sit side by side — the image becomes a dimmed backdrop. */
-  .hero-bg { width: 100%; }
-  .hero-bg img {
-    object-position: center;
-    -webkit-mask-image: none;
-    mask-image: none;
+  /* Too narrow to read text over the photo — the copy stacks above it and the
+     shot becomes a normal block in the flow, still whole. */
+  .hero { min-height: 0; flex-direction: column; align-items: stretch; }
+  .hero .container { order: 1; padding-block: clamp(40px, 7vw, 64px) 0; }
+  .hero-copy { max-width: none; }
+  .hero-bg {
+    order: 2;
+    position: relative;
+    inset: auto;
+    padding: clamp(20px, 4vw, 36px) var(--gutter) clamp(28px, 5vw, 48px);
   }
-  .hero-bg::before {
-    background: linear-gradient(
-      90deg,
-      rgba(15, 15, 16, 0.92) 0%,
-      rgba(15, 15, 16, 0.78) 45%,
-      rgba(15, 15, 16, 0.55) 100%
-    );
-  }
+  .hero-bg img { width: 100%; height: auto; }
+  .hero-bg::after { display: none; }
   .trust .container { grid-template-columns: repeat(2, 1fr); gap: 22px 24px; }
   .card-grid { grid-template-columns: repeat(2, 1fr); }
   .flavour-grid { grid-template-columns: repeat(3, 1fr); }
@@ -761,7 +769,7 @@ ul { list-style: none; }
     gap: 0;
     background: var(--ink-2);
     border-bottom: 1px solid var(--line);
-    padding: 10px 4%;
+    padding: 10px var(--gutter);
   }
   .main-nav.open { display: flex; }
   .main-nav a { padding: 14px 0; border-bottom: 1px solid var(--line); }
@@ -789,7 +797,7 @@ ul { list-style: none; }
 .brand-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 18px;
+  gap: clamp(12px, 1.4vw, 22px);
 }
 .brand-grid .brand-chip { width: auto; height: 104px; }
 
@@ -847,3 +855,59 @@ ul { list-style: none; }
   .brand-grid { grid-template-columns: repeat(2, 1fr); }
   .fx-tabs { justify-content: flex-start; }
 }
+
+/* ==========================================================================
+   Fluid-width refinements
+   The shell is fluid (see --page-max / --gutter), so these blocks only tune
+   how many tracks each grid gets and how the chrome behaves at the extremes.
+   ========================================================================== */
+
+/* ---------- large desktops ---------- */
+@media (min-width: 1400px) {
+  .brand-grid { grid-template-columns: repeat(6, 1fr); }
+  .main-nav { gap: 44px; }
+}
+
+/* ---------- ultrawide: keep filling the screen instead of capping out ---------- */
+@media (min-width: 1900px) {
+  :root {
+    --page-max: 90vw;
+    --gutter: clamp(56px, 3vw, 104px);
+  }
+  .brand-grid { grid-template-columns: repeat(7, 1fr); }
+  .hero-copy { max-width: 720px; }
+}
+
+/* ---------- tablets: header + strip need room before the burger kicks in ---------- */
+@media (max-width: 1100px) {
+  .warning-strip { font-size: 0.68rem; }
+  .warning-strip .msg { text-align: center; }
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 620px) {
+  .warning-strip .container { gap: 10px; }
+  .warning-strip .loc { white-space: normal; }
+  .hero .lede { font-size: 1.05rem; }
+  .visit .container,
+  .contact-grid,
+  .site-footer .top { grid-template-columns: 1fr; }
+  .series-head .chips { flex-wrap: wrap; }
+}
+
+@media (max-width: 460px) {
+  .btn { padding: 13px 18px; font-size: 0.82rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { justify-content: center; }
+  .flavour-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .brand-grid { grid-template-columns: repeat(2, 1fr); }
+  .logo img { height: 44px; width: auto; }
+  .warning-strip .msg { font-size: 0.62rem; }
+  .section-foot .btn { width: 100%; justify-content: center; margin-bottom: 10px; }
+  .brand-hero-logo { width: 140px; height: 84px; }
+  .f-card .body { padding: 13px 14px 15px; }
+}
+
+/* Nothing should push the page sideways. `clip` rather than `hidden` so the
+   sticky header keeps working — `hidden` would turn body into a scroll box. */
+body { overflow-x: clip; }
