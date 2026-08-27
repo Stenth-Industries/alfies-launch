@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Logo from "./Logo";
+import HealthWarning from "./HealthWarning";
 import { STORE, LEGAL } from "@/data/store";
 import { BRANDS } from "@/data/catalog";
+import { InstagramIcon, FacebookIcon } from "./icons";
 
 export default function SiteFooter() {
   const year = new Date().getFullYear();
@@ -23,6 +25,7 @@ export default function SiteFooter() {
             <li><Link href="/">Home</Link></li>
             <li><Link href="/products">Products</Link></li>
             <li><Link href="/contact">Contact Us</Link></li>
+            <li><Link href="/privacy">Privacy</Link></li>
           </ul>
         </div>
 
@@ -54,13 +57,27 @@ export default function SiteFooter() {
               </li>
             ))}
           </ul>
+          <div className="footer-socials">
+            <a href={STORE.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <InstagramIcon />
+            </a>
+            <a href={STORE.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <FacebookIcon />
+            </a>
+          </div>
         </div>
       </div>
 
       <div className="footer-warning">
         <div className="container">
-          {LEGAL.warning} {LEGAL.ageNotice}
+          {LEGAL.ageNotice} {LEGAL.idNotice}
         </div>
+      </div>
+
+      {/* The prescribed warning restated in its required format. The block at
+          the top of the page is the one s. 14 measures; this is a repeat. */}
+      <div className="container">
+        <HealthWarning variant="repeat" />
       </div>
 
       <div className="container footer-bottom">

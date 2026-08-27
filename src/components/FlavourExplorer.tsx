@@ -37,20 +37,19 @@ export default function FlavourExplorer({
 
   return (
     <div className="fx">
-      <div className="fx-tabs" role="tablist" aria-label="Flavour profiles">
-        {profiles.map((p) => (
-          <button
-            key={p.slug}
-            role="tab"
-            type="button"
-            aria-selected={p.slug === current.slug}
-            className={`fx-tab${p.slug === current.slug ? " is-active" : ""}`}
-            onClick={() => setActive(p.slug)}
-          >
-            {p.label}
-            <em>{p.count}</em>
-          </button>
-        ))}
+      <div className="fx-select-wrap">
+        <select
+          className="fx-select"
+          aria-label="Flavour profile"
+          value={current.slug}
+          onChange={(e) => setActive(e.target.value)}
+        >
+          {profiles.map((p) => (
+            <option key={p.slug} value={p.slug}>
+              {p.label} ({p.count})
+            </option>
+          ))}
+        </select>
       </div>
 
       <p className="fx-blurb">{current.blurb}</p>
@@ -81,9 +80,11 @@ export default function FlavourExplorer({
       </div>
 
       {current.count > shown.length ? (
+        /* No "showing N of M" — the narrow-screen rules trim the grid to two
+           rows in CSS, so any count stated here would be wrong on a phone. */
         <p className="fx-more">
-          Showing {shown.length} of {current.count} {current.label.toLowerCase()}{" "}
-          flavours. <Link href="/products">See the full wall →</Link>
+          {current.count} {current.label.toLowerCase()} flavours in store.{" "}
+          <Link href="/products">See the full wall →</Link>
         </p>
       ) : null}
     </div>

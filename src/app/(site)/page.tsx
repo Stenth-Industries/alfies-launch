@@ -55,7 +55,7 @@ export default function HomePage() {
             <span className="ico"><ChatIcon /></span>
             <div>
               <h3>Honest Advice</h3>
-              <p>Real recommendations from real people.</p>
+              <p>Straight answers about what we stock.</p>
             </div>
           </div>
           <div className="trust-item">
@@ -74,7 +74,9 @@ export default function HomePage() {
           <div className="section-head">
             <span className="kicker">Featured Brands</span>
             <h2>
-              The names you <span className="accent">know &amp; trust</span>
+              The brands
+              <br />
+              <span className="accent">we carry</span>
             </h2>
             <p>
               We stock the most popular vape brands in Canada — all under one
@@ -83,27 +85,33 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="brand-grid">
-            {BRANDS.map((b) => {
-              const browsable = BROWSABLE_BRANDS.some((x) => x.slug === b.slug);
-              return (
-                <Link
-                  href={browsable ? `/products/${b.slug}` : "/products"}
-                  className="brand-chip"
-                  key={b.slug}
-                  aria-label={b.name}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={b.logo} alt={`${b.name} logo`} loading="lazy" />
-                </Link>
-              );
-            })}
-          </div>
+          {/* Wrapper so the narrow-screen rules can clamp the wall to three
+              rows and fade the cut out under the "view all" button. */}
+          <div className="brand-reveal">
+            <div className="brand-grid">
+              {BRANDS.map((b) => {
+                const browsable = BROWSABLE_BRANDS.some(
+                  (x) => x.slug === b.slug,
+                );
+                return (
+                  <Link
+                    href={browsable ? `/products/${b.slug}` : "/products"}
+                    className="brand-chip"
+                    key={b.slug}
+                    aria-label={b.name}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={b.logo} alt={`${b.name} logo`} loading="lazy" />
+                  </Link>
+                );
+              })}
+            </div>
 
-          <div className="section-foot">
-            <Link href="/products" className="btn btn-outline">
-              View All Brands
-            </Link>
+            <div className="section-foot">
+              <Link href="/products" className="btn btn-outline">
+                View All Brands
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -132,9 +140,9 @@ export default function HomePage() {
           <div className="section-head">
             <span className="kicker">In Store Now</span>
             <h2>
-              Fan <span className="accent">favourites</span>
+              On the <span className="accent">shelf</span>
             </h2>
-            <p>A taste of what&apos;s on the shelf this week.</p>
+            <p>Part of what we are carrying this week.</p>
           </div>
 
           <div className="card-grid">
@@ -177,9 +185,9 @@ export default function HomePage() {
               Come say hi<span className="accent">.</span>
             </h2>
             <p>
-              The best way to find your next favourite is in person. Browse the
-              flavour wall, try before you buy where we can, and get honest
-              recommendations from people who actually vape.
+              Stock rotates weekly, so the wall in the shop is always ahead of
+              the wall on this page. Come in and we will tell you what is
+              actually in today, and what it costs.
             </p>
             <Link href="/contact" className="btn btn-outline">
               Get Directions

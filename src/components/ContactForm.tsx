@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { STORE } from "@/data/store";
 
@@ -72,7 +73,9 @@ export default function ContactForm() {
       </p>
       <p className="form-note">
         We usually reply within one business day. For anything urgent, calling
-        the shop is fastest.
+        the shop is fastest. Nothing you type here is sent to us until you press
+        send in your own email app — see our{" "}
+        <Link href="/privacy">privacy notice</Link>.
       </p>
     </form>
   );
