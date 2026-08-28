@@ -79,6 +79,8 @@
  "ovns|mesh08|Burst Ice": "/renders/ovns/ovns-mesh08-burst-ice.webp",
  "oxbar|m85k|Cherry": "/renders/oxbar/oxbar-m85k-cherry.webp",
  "oxbar|m85k|Mint": "/renders/oxbar/oxbar-m85k-mint.webp",
+ "oxbar|oxhukka|Grape Mint": "/renders/oxbar/oxbar-oxhukka-25k-grape-mint-shelf.webp",
+ "oxbar|oxhukka|Watermelon Ice": "/renders/oxbar/oxbar-oxhukka-25k-watermelon-ice-shelf.webp",
  "level-x|g2-ultra|Matata": "/renders/level-x/level-x-g2-ultra-pod-matata-iced-on.webp",
  "z-pods|z-pods|Pineapple Lemon": "/renders/z-pods/pineapple-lemon.webp",
  "z-pods|z-pods|Mango Pineapple": "/renders/z-pods/mango-pineapple.webp",
@@ -99,7 +101,7 @@
  "veev|veev-one|Balanced Tobacco": "/renders/veev/veev-veev-one-balanced-tobacco-SHELF-crop.webp",
  "vuse|epod-pods|Mint Ice": "/renders/vuse/vuse-vuse-epod-intense-mint-ice.webp",
  "vuse|devices|Vuse Pro Device": "/renders/vuse/vuse-vuse-pro-smart-device.webp",
- "ovns|mesh08|Berry Cherry Lime": "/renders/ovns/ovns-mesh08-berry-cherry-lime-SHELF-crop.webp",
- "ovns|mesh08|Lush Ice": "/renders/ovns/ovns-mesh08-lush-ice-SHELF-crop.webp",
- "ovns|mesh08|Blue Razz Ice": "/renders/ovns/ovns-mesh08-blue-razz-ice-SHELF-crop.webp"
+ "ovns|mesh08|Berry Cherry Lime": "/renders/ovns/ovns-mesh08-berry-cherry-lime-shelf.webp",
+ "ovns|mesh08|Lush Ice": "/renders/ovns/ovns-mesh08-lush-ice-shelf.webp",
+ "ovns|mesh08|Blue Razz Ice": "/renders/ovns/ovns-mesh08-blue-razz-ice-shelf.webp"
 }

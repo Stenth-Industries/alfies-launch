@@ -5,11 +5,16 @@
  * hand edits here will be overwritten — change scripts/render-map.json instead.
  * A product with no entry falls back to the 'photo coming soon' placeholder.
  *
- * The two OXBAR Oxhukka renders are deliberately absent: the artwork prints
- * 20 mg/mL while the line on the shelf is 6 mg. Shipping a picture whose
- * printed strength contradicts the product is a misleading representation about
- * a product characteristic (TVPA s. 30.42(1)(a)), so those cards take the
- * placeholder until corrected artwork is supplied.
+ * The two OXBAR Oxhukka entries point at shelf crops rather than supplier
+ * artwork, and must stay that way. The supplied renders print 20 mg/mL while
+ * the line on the shelf is 6 mg; shipping a picture whose printed strength
+ * contradicts the product is a misleading representation about a product
+ * characteristic (TVPA s. 30.42(1)(a)), so those renders were pulled in
+ * 034c466 and the cards took the placeholder. What is here now is cut from
+ * Alfie's own shelf photo by scripts/crop-shelf-renders.mjs, so it is the 6 mg
+ * stock itself, and both are framed to the box front so neither states a
+ * nicotine strength at all. Do not swap either back to supplier artwork unless
+ * that artwork prints the strength actually stocked.
  */
 export const RENDERS: Record<string, string> = {
   "elfbar|bc-pro|Blueberry Sour Raspberry": "/renders/elfbar/elfbar-bc-pro-80k-blueberry-sour-raspberry.webp",
@@ -54,16 +59,18 @@ export const RENDERS: Record<string, string> = {
   "orbito|lumo-ai|Blueberry Raspberry": "/renders/orbito/orbito-lumo-ai-120k-blueberry-raspberry.webp",
   "orbito|lumo-ai|Mint": "/renders/orbito/orbito-lumo-ai-120k-mint.webp",
   "orbito|lumo-ai|Watermelon Berries": "/renders/orbito/orbito-lumo-ai-120k-watermelon-berries.webp",
-  "ovns|mesh08|Berry Cherry Lime": "/renders/ovns/ovns-mesh08-berry-cherry-lime-SHELF-crop.webp",
-  "ovns|mesh08|Blue Razz Ice": "/renders/ovns/ovns-mesh08-blue-razz-ice-SHELF-crop.webp",
+  "ovns|mesh08|Berry Cherry Lime": "/renders/ovns/ovns-mesh08-berry-cherry-lime-shelf.webp",
+  "ovns|mesh08|Blue Razz Ice": "/renders/ovns/ovns-mesh08-blue-razz-ice-shelf.webp",
   "ovns|mesh08|Burst Ice": "/renders/ovns/ovns-mesh08-burst-ice.webp",
   "ovns|mesh08|Icy Grape": "/renders/ovns/ovns-mesh08-icy-grape.webp",
-  "ovns|mesh08|Lush Ice": "/renders/ovns/ovns-mesh08-lush-ice-SHELF-crop.webp",
+  "ovns|mesh08|Lush Ice": "/renders/ovns/ovns-mesh08-lush-ice-shelf.webp",
   "oxbar|g100k|M.D.W.": "/renders/oxbar/oxbar-g100k-rocky-vapor-mdw.webp",
   "oxbar|g100k|Peach Berry": "/renders/oxbar/oxbar-g100k-rocky-vapor-peach-berry.webp",
   "oxbar|m85k|Berry Dragonfruit": "/renders/oxbar/oxbar-m85k-berry-dragonfruit.webp",
   "oxbar|m85k|Cherry": "/renders/oxbar/oxbar-m85k-cherry.webp",
   "oxbar|m85k|Mint": "/renders/oxbar/oxbar-m85k-mint.webp",
+  "oxbar|oxhukka|Grape Mint": "/renders/oxbar/oxbar-oxhukka-25k-grape-mint-shelf.webp",
+  "oxbar|oxhukka|Watermelon Ice": "/renders/oxbar/oxbar-oxhukka-25k-watermelon-ice-shelf.webp",
   "oxbar|tri-fusion|Banana Ice": "/renders/oxbar/oxbar-tri-fusion-rocky-vapor-banana-ice.webp",
   "oxbar|tri-fusion|Peach Berry": "/renders/oxbar/oxbar-tri-fusion-rocky-vapor-peach-berry.webp",
   "oxbar|tri-fusion|Strawberry Ice": "/renders/oxbar/oxbar-tri-fusion-rocky-vapor-strawberry-ice.webp",

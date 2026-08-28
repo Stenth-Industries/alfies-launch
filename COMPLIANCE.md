@@ -48,8 +48,13 @@ displayed), **SMDHU + City of Barrie** (registration, inspection, zoning).
   excitement, vitality, risk, daring or a way of life. Sell stock and hours.
 - **Nothing misleading about a product characteristic.** Product art whose
   printed nicotine strength contradicts the shelf gets pulled — that is why the
-  OXBAR Oxhukka renders are absent from `src/data/renders.ts`. If a price is
-  ever displayed it must be the real one; the build currently shows none.
+  supplied OXBAR Oxhukka renders, which print 20 mg/mL against a 6 mg shelf,
+  are not used. Those two cards now show crops of our own shelf photo instead —
+  the 6 mg stock itself, framed to the box front so that neither image states a
+  nicotine strength and neither can contradict the shelf. Before publishing any
+  product image, check the strength printed on it against what is stocked. If a
+  price is ever displayed it must be the real one; the build currently shows
+  none.
 - **No sponsorship, contests, giveaways, loyalty points or discount banners.**
 - **The logo stays a wordmark.** No vapour cloud, no device, no swirl — in the
   logo, the favicon, an app icon, an OG image, section dividers, 404 art or any
