@@ -52,78 +52,85 @@ ul { list-style: none; }
 }
 
 /* ---------- prescribed health warning (VPPR) ---------- */
-/* Every value in here is fixed by regulation rather than chosen: black on
-   white, standard sans serif, bordered, attributed, and at least a fifth of the
-   first screen. It deliberately ignores the site's dark palette — s. 21 sets
-   the colour, so this block looking like it belongs to a different site is the
-   point. See HealthWarning.tsx for the section numbers. */
+/* The wording, colour, sans serif, border and attribution are fixed by
+   regulation rather than chosen — the block deliberately ignores the site's
+   dark palette because s. 21 sets the colour. The *size* rules have been
+   relaxed at the client's request; what was given up is recorded on --hw-area
+   and .hw-frame below. See HealthWarning.tsx for the section numbers. */
 .health-warning {
-  /* s. 14 — the floor on the display area, measured from the top edge down. */
-  --hw-area: 20vh;
+  /* The height of the bar, fixed. The client asked for 40px.
+
+     Two size rules were given up to reach it, and neither is met by this build:
+       s. 14  the warning must take at least 20% of the surface visible at first
+              sight. 40px is ~5% of a 780px viewport. This was `20vh` with a
+              matching min-height.
+       s. 19  the warning must occupy 60–70% of the display area. 40px leaves
+              ~30px of content box, so the line covers roughly half of it.
+     To restore both: `--hw-area: 20vh`, `min-height: var(--hw-area)` in place
+     of `height`, and put .hw-frame back to a column with 70fr/30fr rows. */
+  --hw-area: 40px;
+  height: var(--hw-area);
+  display: flex;
   background: #fff;
   color: #000;
   /* s. 21 — a standard sans serif, not the site's display face, and no
      tracking, condensing or expanding. */
   font-family: Arial, Helvetica, "Segoe UI", sans-serif;
   letter-spacing: 0;
-  padding: clamp(8px, 1.2vw, 16px);
+  padding: 3px clamp(8px, 1.2vw, 16px);
+  /* One type scale for the block: the warning is 1em of it and the
+     attribution 0.66em, so the two keep their proportion at every size.
+     Only the sentence has to fit across now that the attribution is on its
+     own line, so the measure is 32.5em; the tightest point is 320px, where
+     2.69vw would exactly touch, so 2.65vw is the cap with a margin.
+     0.875rem takes over above ~530px, and it is the two lines clearing the
+     bar's 30px of content box that sets it — see .hw-frame. */
+  font-size: min(0.875rem, 2.65vw);
 }
-.hw-primary { min-height: var(--hw-area); display: flex; }
 .hw-frame {
   flex: 1;
   /* s. 17(2) — uniform border, 3% of the shortest side of the display area.
-     The block is always wider than it is tall, so the height is that side. */
+     3% of 40px is under the 2px minimum, so the minimum is what applies. */
   border: solid #000;
   border-width: max(2px, calc(var(--hw-area) * 0.03));
-  /* s. 19 — the warning takes 60–70% of the display area. The rows carry the
-     split; the border and padding sit inside the bordered area and count
-     against it, which is why both are kept tight. Measured in the browser at
-     61–65% rather than assumed. */
-  display: grid;
-  grid-template-rows: 70fr 30fr;
-  align-items: stretch;
-  /* Vertical padding kept tight on purpose: it sits inside the border, so it
-     counts against the display area the 60% is measured on. */
-  padding: clamp(2px, 0.4vh, 6px) clamp(12px, 3vw, 40px);
-}
-.hw-text {
-  /* s. 19 wants the warning itself to fill 60–70% of the display area, which
-     makes the type size a consequence rather than a choice: the block is 20vh
-     tall, so the text is sized off vh to fill its row, and capped against vw so
-     it still fits the line on a narrow screen. The measure forces a wrap on
-     wide viewports — one long line would leave the row two-thirds empty and
-     miss the 60% floor. Verified against .hw-frame at 320px and 1500px. */
-  /* The warning's box *is* its 70% share of the area inside the border — it
-     fills the row rather than floating in the middle of it, so the proportion
-     holds at every viewport instead of drifting with how many lines the
-     sentence happens to wrap to. The glyphs centre inside that box. */
-  height: 100%;
+  /* s. 22's attribution is stacked on its own line under the sentence.
+     Both lines have to clear 30px — the 40px bar less its padding and
+     border — which is what caps the scale: 14px of warning and 9.2px of
+     attribution, both at 1.15, come to 27px.
+
+     Whether the attribution reads better stacked or inline is a question
+     for the compliance review rather than a layout preference. */
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0;
+  padding: 0 clamp(10px, 2.4vw, 32px);
+  min-width: 0;
+}
+.hw-text {
   text-align: center;
-  /* Sized off the viewport height, since that is what the 20% block is sized
-     off, and capped against the width so a narrow screen still fits the line. */
-  font-size: clamp(0.85rem, min(4.2vh, 6.2vw), 2.4rem);
-  line-height: 1.18;
+  font-size: 1em;
+  line-height: 1.15;
   font-weight: 500;
 }
-.hw-text span { max-width: 34ch; }
+/* One line, never wrapped — the scale above is picked so it always fits. */
+.hw-text span { white-space: nowrap; }
 /* s. 21 — first word upper case (in the data) and bold. */
 .hw-text strong { font-weight: 700; }
 /* s. 22 — attribution. */
 .hw-attribution {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(0.7rem, min(1.6vh, 2.4vw), 1.05rem);
+  font-size: 0.66em;
+  line-height: 1.15;
   font-weight: 700;
+  white-space: nowrap;
 }
-/* The footer restatement: same prescribed format, no 20% floor — s. 14 is
-   about the surface visible at first sight, which the footer is not. */
-.hw-repeat { --hw-area: 92px; }
-.hw-repeat .hw-frame { min-height: var(--hw-area); }
+/* The footer block sits inside the page gutter, so it has ~40px less width
+   than the top one at the same viewport and needs a tighter cap. Tightest
+   point is again 320px, where its frame leaves 256px against the 32.5em
+   sentence. 2.45vw came within a pixel of the border there, so 2.35vw, which
+   leaves 11px. */
+.hw-repeat { font-size: min(0.875rem, 2.35vw); }
 
 /* ---------- header ---------- */
 .site-header {
