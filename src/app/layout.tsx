@@ -1,13 +1,31 @@
-import type { Metadata } from "next";
-import { Archivo } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Anton, Poppins } from "next/font/google";
 import "./globals.css";
 import HealthWarning from "@/components/HealthWarning";
 import { STORE } from "@/data/store";
 
-const archivo = Archivo({
+/**
+ * Two faces, two jobs. Anton is the display cut — heavy, condensed, one weight
+ * only — and it carries every headline, eyebrow-free and always upper case.
+ * Poppins carries body copy and UI at 400/500/600; nothing on the page asks for
+ * a heavier body weight, so nothing heavier is downloaded.
+ *
+ * The prescribed health warning is deliberately excluded from both: VPPR s. 21
+ * fixes it to a standard sans serif, so `.health-warning` names Arial itself
+ * and must keep doing so.
+ */
+const anton = Anton({
   subsets: ["latin"],
-  variable: "--font-archivo",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-anton",
+  weight: "400",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  variable: "--font-poppins",
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 /**
@@ -32,11 +50,16 @@ export const metadata: Metadata = {
   },
 };
 
+/** Tints the mobile browser chrome to the page ground so the two meet cleanly. */
+export const viewport: Viewport = {
+  themeColor: "#0c0c0c",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={archivo.variable}>
+    <html lang="en" className={`${anton.variable} ${poppins.variable}`}>
       <body>
         {/* First thing in the document on every route, including the age gate:
             VPPR s. 24 requires the warning at the beginning of an advertisement

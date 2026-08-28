@@ -5,7 +5,7 @@ import { AGE_COOKIE, AGE_GATE_PATH } from "@/lib/age-gate";
  * Assets an unverified visitor is allowed to load, because the gate page
  * itself renders them. The wordmark of the shop is not a vaping product.
  */
-const UNGATED_ASSETS = ["/logo-light.png", "/logo.png"];
+const UNGATED_ASSETS = ["/logo-gold.png", "/logo-light.png", "/logo.png"];
 
 /**
  * Product imagery in /public, which stays behind the gate. Page routes are not
