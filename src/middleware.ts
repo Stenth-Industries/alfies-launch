@@ -3,7 +3,13 @@ import { AGE_COOKIE, AGE_GATE_PATH } from "@/lib/age-gate";
 
 /**
  * Assets an unverified visitor is allowed to load, because the gate page
- * itself renders them. The wordmark of the shop is not a vaping product.
+ * itself renders them. The emblem of the shop is not a vaping product.
+ *
+ * These are matched against the raw pathname, not just `/_next/image`'s `url`
+ * param: images are served unoptimised (see next.config.mjs), so the browser
+ * asks for the file directly and the optimiser branch below never runs for
+ * them. Without the raw check the gate's own logo falls through to the
+ * catch-all rewrite and the <img> receives an HTML document.
  */
 const UNGATED_ASSETS = ["/logo-gold.png", "/logo-light.png", "/logo.png"];
 
@@ -34,7 +40,12 @@ export function middleware(req: NextRequest) {
 
   const { pathname, searchParams } = req.nextUrl;
 
+  // The gate's own artwork, requested directly because images are unoptimised.
+  if (UNGATED_ASSETS.includes(pathname)) return NextResponse.next();
+
   // Optimised images: allow through only the handful the gate itself needs.
+  // Unreachable while images.unoptimized is set, kept so flipping that back on
+  // does not silently reopen /_next/image as a back door to the renders.
   if (pathname === "/_next/image") {
     const target = searchParams.get("url") ?? "";
     return UNGATED_ASSETS.includes(target)
