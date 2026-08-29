@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ProductThumb from "@/components/ProductThumb";
 import type { ShelfItem } from "@/data/home";
 
@@ -27,6 +27,37 @@ export default function FlavourExplorer({
   perTab?: number;
 }) {
   const [active, setActive] = useState(profiles[0]?.slug ?? "");
+  const [expanded, setExpanded] = useState(false);
+  /** Height of the grid's first row, measured; null until the effect runs. */
+  const [rowHeight, setRowHeight] = useState<number | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // The grid is `auto-fill`, so how many cards make a row depends on the
+  // viewport and cannot be known here — the collapsed height has to be
+  // measured rather than counted. Grid items stretch to their row, so the
+  // first card's height is the row's height.
+  //
+  // Collapsed shows row one whole plus PEEK of row two, so what is hidden
+  // reads as "more of the same below" rather than as the end of the grid.
+  // The fade sits over the peek, which is why the first row's own labels
+  // stay at full contrast.
+  const measure = useCallback(() => {
+    const first = gridRef.current?.firstElementChild;
+    if (first instanceof HTMLElement) setRowHeight(first.offsetHeight);
+  }, []);
+
+  /** How much of the second row shows through under the fade. */
+  const PEEK = 88;
+
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(grid);
+    return () => ro.disconnect();
+  }, [measure, active]);
+
   const current = profiles.find((p) => p.slug === active) ?? profiles[0];
   if (!current) return null;
 
@@ -42,7 +73,12 @@ export default function FlavourExplorer({
           className="fx-select"
           aria-label="Flavour profile"
           value={current.slug}
-          onChange={(e) => setActive(e.target.value)}
+          onChange={(e) => {
+            setActive(e.target.value);
+            // A new profile starts collapsed, or switching tabs while expanded
+            // would drop the visitor into the middle of a different grid.
+            setExpanded(false);
+          }}
         >
           {profiles.map((p) => (
             <option key={p.slug} value={p.slug}>
@@ -54,7 +90,19 @@ export default function FlavourExplorer({
 
       <p className="fx-blurb">{current.blurb}</p>
 
-      <div className="flavour-grid">
+      <div className="fx-reveal" data-expanded={expanded ? "" : undefined}>
+        <div
+          className="flavour-grid"
+          ref={gridRef}
+          // Collapsed to exactly one row until measured, then animated open.
+          // `undefined` rather than "none" so the expanded grid has no cap at
+          // all and can grow when a card wraps to a taller body.
+          style={
+            expanded || rowHeight === null
+              ? undefined
+              : { maxHeight: rowHeight + PEEK, overflow: "hidden" }
+          }
+        >
         {shown.map((item) => (
           <Link
             className="f-card"
@@ -77,6 +125,20 @@ export default function FlavourExplorer({
             </div>
           </Link>
         ))}
+        </div>
+
+        {shown.length > 1 ? (
+          <div className="fx-foot">
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
+            >
+              {expanded ? "Show Less" : "View All"}
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {current.count > shown.length ? (

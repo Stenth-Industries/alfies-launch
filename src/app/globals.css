@@ -1209,8 +1209,11 @@ html.dialog-open { overflow: hidden; }
   /* Both halves on one line — they wrapped to two at the narrow end. */
   .p-card .stock,
   .p-card .link { font-size: 0.7rem; letter-spacing: 0.04em; white-space: nowrap; }
-  /* Two rows is enough of a taste — the rest is a tap away. */
-  .flavour-grid > :nth-child(n + 5) { display: none; }
+  /* Two rows is enough of a taste while collapsed. Scoped to the collapsed
+     state, or "View All" would expand the grid and still show only four. */
+  .fx-reveal:not([data-expanded]) .flavour-grid > :nth-child(n + 5) {
+    display: none;
+  }
   /* Flavour cards: the padding was doing more work than the content. */
   .f-card .body { padding: 10px 11px 12px; gap: 3px; }
   .f-card h3 { font-size: 0.86rem; line-height: 1.2; }
@@ -1310,6 +1313,35 @@ html.dialog-open { overflow: hidden; }
 /* The native menu is drawn by the OS, so it needs its own colours. */
 .fx-select option { background: var(--ink-3); color: var(--white); }
 .fx-blurb { text-align: center; color: var(--muted); font-size: 0.92rem; margin-bottom: 32px; }
+/* One row, then a fade with the toggle sitting on it — the same reveal the
+   brand wall uses, but interactive: the flavour grid has no page of its own to
+   send people to, so "View All" opens it in place rather than navigating.
+   The clamp height is measured in FlavourExplorer, because the grid is
+   auto-fill and a row is not a fixed number of cards. */
+.fx-reveal { position: relative; }
+.fx-reveal .flavour-grid { transition: max-height 0.35s ease; }
+.fx-reveal:not([data-expanded])::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Covers the peeked second row and clears the button's own row, so the
+     first row's labels keep full contrast and only the overflow fades. */
+  bottom: 56px;
+  height: 118px;
+  background: linear-gradient(180deg, transparent, var(--ink-2) 72%);
+  pointer-events: none;
+  z-index: 1;
+}
+.fx-foot {
+  display: flex;
+  justify-content: center;
+  /* Pulled up onto the fade, above it so the gradient doesn't wash it out. */
+  position: relative;
+  z-index: 2;
+  margin-top: 18px;
+}
+
 .fx-more { text-align: center; margin-top: 28px; color: var(--muted); font-size: 0.88rem; }
 .fx-more a { color: var(--gold); font-weight: 600; }
 .fx-more a:hover { text-decoration: underline; }
