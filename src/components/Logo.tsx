@@ -4,10 +4,10 @@ import { STORE } from "@/data/store";
 
 /**
  * Intrinsic size of public/logo-gold.png, used to derive width from height.
- * Keep it in step with the artwork — `node scripts/knockout-logo.mjs` prints
- * the trimmed dimensions, and a stale ratio here stretches the wordmark.
+ * Keep it in step with the artwork — `node scripts/prepare-logo.mjs` prints
+ * the trimmed dimensions, and a stale ratio here stretches the emblem.
  */
-const RATIO = 1211 / 832;
+const RATIO = 1508 / 1010;
 
 type Props = {
   /** Rendered height in px; width follows the artwork's aspect ratio. */
@@ -17,10 +17,11 @@ type Props = {
 };
 
 /**
- * The client's logo.png is drawn for light backgrounds (solid black script).
- * `scripts/build-logo.mjs` turns it into the white-on-dark wordmark, and
- * `scripts/retint-logo.mjs` moves the accent from the old teal onto the brand
- * gold — public/logo-gold.png is that last step and is what ships.
+ * The client's current artwork is the gold emblem at root logo-emblem.png,
+ * supplied finished — gold on transparency, no recolour needed.
+ * `scripts/prepare-logo.mjs` only trims its surround into public/logo-gold.png,
+ * which is what ships. The build-logo / retint-logo / knockout-logo scripts
+ * belong to the superseded teal wordmark and are not in this path any more.
  */
 export default function Logo({ height = 78, link = true }: Props) {
   const img = (
