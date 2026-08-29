@@ -974,7 +974,7 @@ html.dialog-open { overflow: hidden; }
 /* ---------- contact page ---------- */
 .contact-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(24px, 3vw, 56px);
   align-items: start;
 }
@@ -986,42 +986,6 @@ html.dialog-open { overflow: hidden; }
 }
 .contact-panel h2 { font-size: 1.55rem; margin-bottom: 10px; }
 .contact-panel > p { color: var(--muted); font-size: 0.95rem; margin-bottom: 26px; }
-
-.form-grid { display: grid; gap: 18px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.field label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.field input,
-.field select,
-.field textarea {
-  width: 100%;
-  background: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  color: var(--white);
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  padding: 13px 15px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.field textarea { resize: vertical; min-height: 130px; }
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(var(--gold-rgb), 0.15);
-}
-.form-note { font-size: 0.8rem; color: var(--muted-2); }
-.form-status { font-size: 0.9rem; font-weight: 600; color: var(--gold); display: none; }
-.form-status.show { display: block; }
 
 .hours-table { width: 100%; border-collapse: collapse; }
 .hours-table td { padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
@@ -1262,7 +1226,6 @@ html.dialog-open { overflow: hidden; }
   .flavour-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .trust .container { grid-template-columns: 1fr; gap: 18px; }
   .card-grid { grid-template-columns: 1fr; }
-  .form-row { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; text-align: center; }
   .age-actions { flex-direction: column; }
 }

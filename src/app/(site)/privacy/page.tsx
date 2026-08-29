@@ -68,11 +68,10 @@ export default function PrivacyPage() {
 
           <h2>Contacting us</h2>
           <p>
-            The contact form does not send anything to us or to anyone else. It
-            opens a draft in your own email app with what you typed already in
-            it, and nothing happens until you press send. At that point your
-            message reaches us the same way any email would, and we keep it only
-            as long as we need it to answer you.
+            This site has no contact form, so there is nothing here that
+            collects what you type. If you email or call the shop, your message
+            reaches us the same way any email or phone call would, and we keep
+            it only as long as we need it to answer you.
           </p>
 
           <h2>What we do not do</h2>

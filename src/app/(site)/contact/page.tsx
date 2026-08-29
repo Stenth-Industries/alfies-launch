@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import ContactForm from "@/components/ContactForm";
 import { STORE } from "@/data/store";
 import { PinIcon, PhoneIcon, MailIcon } from "@/components/icons";
 
@@ -66,31 +65,22 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-
-            <div className="contact-panel">
-              <h2>Store Hours</h2>
-              <p>Holiday hours may differ — check our socials.</p>
-              <table className="hours-table">
-                <tbody>
-                  {STORE.hours.map((h) => (
-                    <tr key={h.days}>
-                      <td>{h.days}</td>
-                      <td>{h.time}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           </div>
 
-          {/* ---------- form column ---------- */}
+          {/* ---------- hours column ---------- */}
           <div className="contact-panel">
-            <h2>Send us a message</h2>
-            <p>
-              Looking for a specific flavour or device? Tell us what you&apos;re
-              after and we&apos;ll get back to you.
-            </p>
-            <ContactForm />
+            <h2>Store Hours</h2>
+            <p>Holiday hours may differ — check our socials.</p>
+            <table className="hours-table">
+              <tbody>
+                {STORE.hours.map((h) => (
+                  <tr key={h.days}>
+                    <td>{h.days}</td>
+                    <td>{h.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
