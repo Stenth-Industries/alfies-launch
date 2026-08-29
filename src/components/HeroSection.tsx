@@ -9,9 +9,9 @@ import { PinIcon, PhoneIcon, BagIcon } from "@/components/icons";
  * only the sections underneath differ.
  *
  * The shot sits behind the copy at its natural scale — contained, not
- * cover-cropped — so the neon sign and the whole device lineup stay in frame.
- * Fitting is left to CSS (`.hero-bg img`) rather than an inline style so the
- * narrow-screen rules can restack it under the copy.
+ * cover-cropped — so the gold emblem and the whole device lineup stay in
+ * frame. Fitting is left to CSS (`.hero-bg img`) rather than an inline
+ * style so the narrow-screen rules can restack it under the copy.
  */
 export default function HeroSection() {
   return (
@@ -19,7 +19,7 @@ export default function HeroSection() {
       <div className="hero-bg">
         <Image
           src="/hero.png"
-          alt="The device lineup on the counter at Alfie's Vape Store, under the neon shop sign"
+          alt="The device lineup on the counter at Alfie's Vape Store, under the gold Alfies Variety & Vape emblem"
           width={1536}
           height={1024}
           sizes="(max-width: 960px) 100vw, 85vw"
