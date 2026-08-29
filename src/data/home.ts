@@ -63,15 +63,22 @@ export const SHELF: ShelfItem[] = Object.entries(SERIES).flatMap(
  */
 export const FEATURED_KEYS: string[] = [];
 
-function derivedPicks(limit: number): ShelfItem[] {
+/**
+ * The first rendered flavour of each series. One card per series, so a brand
+ * with ten flavours cannot flood a rail, and never a placeholder card.
+ */
+function renderedSeries(): ShelfItem[] {
   const bySeries = new Map<string, ShelfItem>();
   for (const item of SHELF) {
     if (!item.render) continue;
     const id = `${item.brandSlug}|${item.seriesSlug}`;
-    // One card per series, so a brand with ten flavours cannot flood the rail.
     if (!bySeries.has(id)) bySeries.set(id, item);
   }
-  return [...bySeries.values()]
+  return [...bySeries.values()];
+}
+
+function derivedPicks(limit: number): ShelfItem[] {
+  return renderedSeries()
     .sort((a, b) => b.puffCount - a.puffCount)
     .slice(0, limit);
 }
@@ -85,6 +92,49 @@ export function shelfPicks(limit = 8): ShelfItem[] {
     if (picked.length) return picked.slice(0, limit);
   }
   return derivedPicks(limit);
+}
+
+/**
+ * Deterministic PRNG (mulberry32), so a "random" pick can be reproduced from
+ * its seed. Math.random() is wrong for this page in both directions: the home
+ * page is statically rendered, so a draw at render time would be frozen into
+ * the build and never change again, and a draw in the browser would disagree
+ * with the server's HTML and trip a hydration mismatch.
+ */
+function seededRandom(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Whole days since the epoch — the seed that rotates the picks overnight. */
+function today(): number {
+  return Math.floor(Date.now() / 86_400_000);
+}
+
+/**
+ * A day's worth of "new arrivals": a random sample of the wall that holds
+ * still for the day and reshuffles overnight.
+ *
+ * It is a *sample*, not a claim about delivery dates — nothing in the
+ * catalogue records when a flavour actually landed, and the copy on the
+ * section is written to match. Give the page a matching `revalidate` or the
+ * static render will keep serving whichever day it was built on.
+ */
+export function arrivalPicks(limit = 3, seed = today()): ShelfItem[] {
+  const pool = renderedSeries();
+  const rand = seededRandom(seed);
+  // Fisher-Yates over a copy: partial is enough, we only need `limit` of them.
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, limit);
 }
 
 /* ------------------------------------------------------------- puff tiers */

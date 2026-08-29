@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import HeroSection from "@/components/HeroSection";
 import FlavourExplorer, { type ProfileTab } from "@/components/FlavourExplorer";
+import ProductThumb from "@/components/ProductThumb";
 import { STORE } from "@/data/store";
-import { FLAVOUR_PROFILES } from "@/data/home";
+import { FLAVOUR_PROFILES, arrivalPicks } from "@/data/home";
 import { BRANDS, BROWSABLE_BRANDS, PRODUCT_BRANDS } from "@/data/catalog";
 import {
   PinIcon,
@@ -17,8 +18,16 @@ import {
   MailIcon,
 } from "@/components/icons";
 
+/**
+ * arrivalPicks() reshuffles on a day boundary, so the static render has to be
+ * allowed to go stale — without this it would serve whichever day it was built
+ * on until the next deploy.
+ */
+export const revalidate = 86_400;
+
 export default function HomePage() {
   const featured = PRODUCT_BRANDS.slice(0, 3);
+  const arrivals = arrivalPicks(3);
   // The RegExp on each profile cannot cross into a client component.
   const tabs: ProfileTab[] = FLAVOUR_PROFILES.map(
     ({ slug, label, blurb, count, items }) => ({
@@ -64,6 +73,49 @@ export default function HomePage() {
               <h3>Friendly Service</h3>
               <p>We&apos;re here to help you find what you need.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- new arrivals ---------- */}
+      <section className="section section-alt">
+        <div className="container">
+          <div className="section-head">
+            <span className="kicker">New Arrivals</span>
+            <h2>
+              Fresh on <span className="accent">the wall</span>
+            </h2>
+            <p>
+              A few of the newer faces in the shop. The wall turns over weekly —
+              call ahead if you want one held.
+            </p>
+          </div>
+
+          <div className="card-grid">
+            {arrivals.map((a) => (
+              <Link
+                href={`/products/${a.brandSlug}`}
+                className="p-card"
+                key={a.key}
+              >
+                <div className="thumb">
+                  <ProductThumb
+                    src={a.render}
+                    alt={`${a.brandName} ${a.seriesName} — ${a.flavour}`}
+                  />
+                </div>
+                <div className="body">
+                  <h3>{a.flavour}</h3>
+                  <p className="desc">
+                    {a.brandName} · {a.seriesName}
+                  </p>
+                  <div className="foot">
+                    <span className="stock">In store</span>
+                    <span className="link">View range →</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
