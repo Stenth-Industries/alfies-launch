@@ -22,8 +22,19 @@ import { HEALTH_WARNING } from "@/data/store";
  *   s. 24–30  in advertising delivered by telecommunication it appears at the
  *             beginning and must not be obscured.
  *
- * Deliberately black-on-white in both themes: the colour is fixed by s. 21, so
- * this block does not follow the site's dark palette. That is not a bug.
+ * Three rules have been relaxed at the client's request and are NOT met by this
+ * build. They are listed here rather than quietly dropped, because the words
+ * being right is not the same as the block being compliant:
+ *
+ *   s. 14  the 20% first-screen area, traded for a fixed 40px bar.
+ *   s. 19  the 60-70% share of the display area, which the 40px bar cannot hold.
+ *   s. 21  black on white. The block is inverted to white on black with a white
+ *          border, to sit inside the site's dark palette. The prescribed
+ *          colours are the ones in the CSS comment on `.health-warning`.
+ *
+ * The wording, the bold first word, the sans-serif face and the Health Canada
+ * attribution are all still as prescribed. Restoring any of the three is a
+ * CSS-only change; see globals.css.
  */
 export default function HealthWarning({
   variant = "primary",

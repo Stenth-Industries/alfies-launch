@@ -18,9 +18,15 @@ displayed), **SMDHU + City of Barrie** (registration, inspection, zoning).
 - **The warning block is a typographic spec, not a sentence.**
   `src/components/HealthWarning.tsx` + `.health-warning` in `globals.css`:
   ≥20% of the first screen, bordered at 3% of the shortest side, warning box
-  60–70% of the area inside the border, black on white, standard sans serif,
-  first word bold caps, attributed to Health Canada. Measured in-browser at
-  20.0% / 66.5% across 320–1920px. If you change the layout, re-measure.
+  60-70% of the area inside the border, standard sans serif, first word bold
+  caps, attributed to Health Canada.
+
+  THREE PRESCRIBED RULES ARE NOT MET, all at the client's explicit request:
+  s. 14 (>=20% of the first screen) and s. 19 (60-70% share) were traded for a
+  fixed 40px bar, and s. 21's black-on-white was inverted to white-on-black
+  with a white border to suit the dark palette. Each is a CSS-only change to
+  restore and each is recorded at the point it is broken. Re-measure if you
+  change the layout.
 - **The age gate is server-side.** `src/middleware.ts` rewrites every unverified
   request to `/age-check` and 404s product imagery, including the
   `/_next/image` back door. A client-side overlay is not a gate: the markup has

@@ -145,9 +145,9 @@ ul { list-style: none; }
 /* ---------- prescribed health warning (VPPR) ---------- */
 /* The wording, colour, sans serif, border and attribution are fixed by
    regulation rather than chosen — the block deliberately ignores the site's
-   dark palette because s. 21 sets the colour. The *size* rules have been
-   relaxed at the client's request; what was given up is recorded on --hw-area
-   and .hw-frame below. See HealthWarning.tsx for the section numbers. */
+   dark palette. The size rules AND the s. 21 colour have been relaxed at the
+   client's request; what was given up is recorded on --hw-area and .hw-frame
+   below. See HealthWarning.tsx for the section numbers. */
 .health-warning {
   /* The height of the bar, fixed. The client asked for 40px.
 
@@ -162,8 +162,11 @@ ul { list-style: none; }
   --hw-area: 40px;
   height: var(--hw-area);
   display: flex;
-  background: #fff;
-  color: #000;
+  /* s. 21 prescribes black on white. Inverted at the client's request — see
+     the note on the third rule given up in HealthWarning.tsx. To restore:
+     `background: #fff; color: #000;` here and `border: solid #000` below. */
+  background: #000;
+  color: #fff;
   /* s. 21 — a standard sans serif, not the site's display face, and no
      tracking, condensing or expanding. */
   font-family: Arial, Helvetica, "Segoe UI", sans-serif;
@@ -182,7 +185,7 @@ ul { list-style: none; }
   flex: 1;
   /* s. 17(2) — uniform border, 3% of the shortest side of the display area.
      3% of 40px is under the 2px minimum, so the minimum is what applies. */
-  border: solid #000;
+  border: solid #fff;
   border-width: max(2px, calc(var(--hw-area) * 0.03));
   /* s. 22's attribution is stacked on its own line under the sentence.
      Both lines have to clear 30px — the 40px bar less its padding and
