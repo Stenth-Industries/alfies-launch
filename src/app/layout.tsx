@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Poppins } from "next/font/google";
+import { Anton, JetBrains_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import HealthWarning from "@/components/HealthWarning";
 import { STORE } from "@/data/store";
@@ -18,6 +18,19 @@ const anton = Anton({
   subsets: ["latin"],
   variable: "--font-anton",
   weight: "400",
+  display: "swap",
+});
+
+/**
+ * The utility face, for machine-readable metadata only: puff counts, series
+ * codes (GH20000, BC10000), flavour counts. Those are specifications, and
+ * setting them in the same face as the prose was what made them read as
+ * afterthoughts. It is never used for prose, headings or controls.
+ */
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -59,7 +72,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${anton.variable} ${poppins.variable}`}>
+    <html
+      lang="en"
+      className={`${anton.variable} ${poppins.variable} ${jetbrains.variable}`}
+    >
       <body>
         {/* First thing in the document on every route, including the age gate:
             VPPR s. 24 requires the warning at the beginning of an advertisement

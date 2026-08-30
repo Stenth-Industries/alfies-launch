@@ -56,10 +56,6 @@ export default function ProductsPage() {
                       </span>
                       <span>{countProducts(b.slug)} flavours</span>
                     </div>
-                    <div className="foot">
-                      <span className="stock">In store</span>
-                      <span className="link">View the lineup →</span>
-                    </div>
                   </div>
                 </Link>
               );

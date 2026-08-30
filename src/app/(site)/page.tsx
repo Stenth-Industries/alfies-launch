@@ -109,10 +109,6 @@ export default function HomePage() {
                   <p className="desc">
                     {a.brandName} · {a.seriesName}
                   </p>
-                  <div className="foot">
-                    <span className="stock">In store</span>
-                    <span className="link">View range →</span>
-                  </div>
                 </div>
               </Link>
             ))}
@@ -123,7 +119,7 @@ export default function HomePage() {
       {/* ---------- featured brands ---------- */}
       <section className="section">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head is-left">
             <span className="kicker">Featured Brands</span>
             <h2>
               The brands
@@ -189,7 +185,7 @@ export default function HomePage() {
       {/* ---------- featured products ---------- */}
       <section className="section">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head is-left">
             <span className="kicker">In Store Now</span>
             <h2>
               On the <span className="accent">shelf</span>
@@ -199,7 +195,11 @@ export default function HomePage() {
 
           <div className="card-grid">
             {featured.map((b) => (
-              <article className="p-card" key={b.slug}>
+              /* The card is the link now. It used to be an <article> whose
+                 only affordance was the "View range" anchor inside it, so
+                 removing that without promoting the card would have left the
+                 whole tile unclickable and unreachable by keyboard. */
+              <Link href="/products" className="p-card" key={b.slug}>
                 <div className="thumb">
                   <Image
                     src={b.cover}
@@ -211,12 +211,8 @@ export default function HomePage() {
                 <div className="body">
                   <h3>{b.name}</h3>
                   <p className="desc">{b.tagline}</p>
-                  <div className="foot">
-                    <span className="stock">In store</span>
-                    <Link href="/products" className="link">View range →</Link>
-                  </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
 

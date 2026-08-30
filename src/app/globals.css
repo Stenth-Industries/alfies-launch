@@ -30,14 +30,26 @@
   --ink: #0c0c0c;
   --ink-2: #121212;
   --ink-3: #171717;
-  --line: #262626;
+  /* Structure is a hairline, not a grey box. #262626 was an opaque slab that
+     read as a drawn rectangle around everything; an alpha at ~0.09 states the
+     edge and then gets out of the way, and it holds its relationship to
+     whichever ink step sits behind it. --line-strong is the old weight, kept
+     for the few places that genuinely divide rather than enclose. */
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.14);
   --white: #ffffff;
   --paper: #fffbf7;
   --muted: rgba(255, 255, 255, 0.66);
   /* The palette's ink.muted (#6b6b6b), written as an alpha rather than a hex
      so it holds its relationship to whichever ink step is behind it. */
-  --muted-2: rgba(255, 255, 255, 0.42);
-  --radius: 16px;
+  /* 0.42 measured 4.09:1 on --ink-3 and 4.02:1 on the footer's #070707, and
+     the two places it renders (.f-card .meta at 11.2px, .footer-bottom at
+     12.8px) are both small text needing 4.5:1. 0.50 measures 5.26 and 5.31. */
+  --muted-2: rgba(255, 255, 255, 0.5);
+  /* 16px read as soft consumer-app chrome. 8px is a corner, not a pill, and
+     it lets the concentric rule work: an 8px card holding a 6px control. */
+  --radius: 8px;
+  --radius-sm: 6px;
   /* Fluid page shell — content stretches with the viewport instead of sitting
      in a fixed 1180px column. Gutters grow with the screen so wide monitors
      get breathing room without the layout collapsing into a narrow strip. */
@@ -52,6 +64,7 @@
      that ships on a machine, so a failed webfont still lands condensed. */
   --font-display: var(--font-anton), Impact, "Haettenschweiler", sans-serif;
   --font-body: var(--font-poppins), system-ui, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -70,32 +83,53 @@ img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
+/* One focus ring for the whole site. Chrome's default indicator is drawn from
+   the page's own colours and disappears against this near-black ground, so
+   every link, button and card was keyboard-reachable with nothing on screen to
+   say where you were. `:focus-visible` rather than `:focus` keeps it off mouse
+   clicks. Text inputs opt out below — they show focus on their border. */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
 /* ==========================================================================
    Type system
-   Two roles. Display is Anton: one weight, condensed, always upper case, set
-   tight because the face is drawn to be set tight. Everything else is Poppins
-   at 400/500/600 — there is no bolder body weight loaded, so a rule asking for
-   700 here would quietly synthesise one, which is why none do.
+   Three roles. Anton shouts exactly twice — the landing hero and the age gate
+   — because a single condensed poster face carrying every heading on the site
+   flattened the hierarchy it was supposed to be creating. Poppins carries
+   headings and body at 400/500/600; there is no bolder body weight loaded, so
+   a rule asking for 700 would quietly synthesise one, which is why none do.
+   JetBrains Mono carries specifications and nothing else.
    ========================================================================== */
 
-/* The display face, applied to the headings that carry a page rather than to
-   every heading — Anton at caption size, on two lines, at 0.92 leading is a
-   wall. Small headings (flavour cards, footer columns, prose) stay in Poppins
-   600, which is what reads at that size. */
+/* The shout. Two headlines, both of them a shopfront. */
 .hero h1,
-.page-hero h1,
-.section-head h2,
-.series-head h2,
-.visit h2,
-.contact-panel h2,
-.p-card h3,
-.p-dialog-title,
 .age-card h1 {
   font-family: var(--font-display);
   font-weight: 400;
   text-transform: uppercase;
   line-height: 0.92;
   letter-spacing: -0.025em;
+}
+
+/* Every other display heading. Sentence case, semibold, tracked tight and set
+   large — hierarchy from size and spacing rather than from a second face. */
+.page-hero h1,
+.section-head h2,
+.series-head h2,
+.visit h2,
+.contact-panel h2,
+.p-card h3,
+.p-dialog-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 /* The metallic on type. Clipping a gradient to the glyphs is the only way to
@@ -127,11 +161,11 @@ ul { list-style: none; }
 .hero-tag,
 .section-head .kicker,
 .page-hero .kicker {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.22em;
   color: var(--gold);
 }
 
@@ -486,33 +520,29 @@ ul { list-style: none; }
   display: block;
   margin-bottom: 12px;
 }
-.section-head h2 {
-  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+/* Tier 2: the rhythm variant. Four identical centred blocks down one page is a
+   template, and the eye stops reading them by the third. Alternate sections
+   set theirs left, against the grid's leading edge. */
+.section-head.is-left {
+  text-align: left;
+  margin-inline: 0;
+  max-width: 52ch;
 }
-.section-head p { margin-top: 14px; color: var(--muted); }
+
+/* Poppins sets smaller on the eye than Anton at the same nominal size, and the
+   title/body ratio was only 2.6x — technically over the 2.5x floor, but thin.
+   This takes it to roughly 3.4x at the top of the clamp. */
+.section-head h2 {
+  font-size: clamp(2rem, 4vw, 3.1rem);
+}
+.section-head p { margin-top: 14px; color: var(--muted); text-wrap: pretty; }
 .section-foot { text-align: center; margin-top: 44px; }
 
-/* ---------- brand logo marquee ---------- */
-.brand-marquee { overflow: hidden; position: relative; }
-.brand-marquee::before,
-.brand-marquee::after {
-  content: "";
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 90px;
-  z-index: 2;
-  pointer-events: none;
-}
-.brand-marquee::before { left: 0; background: linear-gradient(90deg, var(--ink-2), transparent); }
-.brand-marquee::after { right: 0; background: linear-gradient(270deg, var(--ink-2), transparent); }
-.brand-track {
-  display: flex;
-  gap: 28px;
-  width: max-content;
-  animation: marquee 32s linear infinite;
-}
-.brand-marquee:hover .brand-track { animation-play-state: paused; }
-@keyframes marquee { to { transform: translateX(-50%); } }
+/* ---------- brand logo wall ---------- */
+/* The scrolling marquee that used to live here was deleted: no component had
+   used .brand-marquee or .brand-track since the wall became a static grid, and
+   it carried an infinite animation with no reduced-motion guard — a trap for
+   whoever wired it back up. The chip styling below is what the grid uses. */
 .brand-chip {
   flex: none;
   width: 190px;
@@ -526,7 +556,25 @@ ul { list-style: none; }
   transition: transform 0.2s, border-color 0.2s;
 }
 .brand-chip:hover { transform: translateY(-4px); border-color: rgba(var(--gold-rgb), 0.45); }
-.brand-chip img { max-height: 60px; width: auto; max-width: 100%; object-fit: contain; }
+
+/* Tier 2: at rest the wall is one metal. Eleven supplier logos at full
+   saturation is eleven colour systems fighting on one row — it reads as a
+   sticker sheet. Desaturated, the wall reads as curated and the row finally
+   has a single texture; colour is the hover reward. */
+.brand-chip img {
+  max-height: 60px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: grayscale(1) brightness(1.1);
+  opacity: 0.6;
+  transition: filter 0.25s, opacity 0.25s;
+}
+
+.brand-chip:hover img {
+  filter: none;
+  opacity: 1;
+}
 
 /* ---------- product / brand cards ---------- */
 .card-grid {
@@ -550,7 +598,33 @@ ul { list-style: none; }
   border-color: rgba(var(--gold-rgb), 0.45);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
 }
-.p-card .thumb { position: relative; aspect-ratio: 3 / 2; overflow: hidden; }
+/* Tier 2: one ground for every crop. The grid mixes bright supplier marketing
+   renders (cyan VEEV, magenta Elfbar) with dark cutouts, and that mismatch was
+   the strongest "reseller, not brand" signal on the page. Rather than restyle
+   art we do not own, every thumb now sits on the same ink ground, carries the
+   same hairline, and takes a scrim that seats the bright ones into the card
+   instead of letting them glare out of it. */
+.p-card .thumb {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--ink-2);
+  border-bottom: 1px solid var(--line);
+}
+
+/* The scrim: a vignette weighted to the bottom edge, where the crop meets the
+   label. It costs the dark renders almost nothing and pulls the loud ones down
+   onto the same value. */
+.p-card .thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(12, 12, 12, 0.22) 0%, transparent 34%,
+      transparent 62%, rgba(12, 12, 12, 0.5) 100%),
+    radial-gradient(120% 82% at 50% 42%, transparent 52%, rgba(12, 12, 12, 0.34) 100%);
+}
 /* Anchored to the top: these covers carry the brand wordmark in the top-left,
    so a centred crop shaves the one part of the art that identifies them. */
 .p-card .thumb img {
@@ -558,36 +632,36 @@ ul { list-style: none; }
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  transition: transform 0.4s;
+  filter: saturate(0.88) brightness(0.95);
+  transition: transform 0.4s, filter 0.4s;
 }
-.p-card:hover .thumb img { transform: scale(1.045); }
-.p-card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-.p-card h3 { font-size: 1.35rem; }
-.p-card .desc { color: var(--muted); font-size: 0.9rem; flex: 1; }
-.p-card .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 2px; }
+.p-card:hover .thumb img { transform: scale(1.045); filter: none; }
+.p-card .body { padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.p-card h3 { font-size: 1.3rem; }
+.p-card .desc { color: var(--muted); font-size: 0.9rem; flex: 1; text-wrap: pretty; }
+.p-card .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+
+/* Specifications, so they take the mono face and a square chip rather than a
+   pill — a count is data, not a tag. */
 .p-card .chips span {
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
   color: var(--muted);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
 }
-.p-card .foot {
-  margin-top: 12px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.p-card .stock { color: var(--gold); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; gap: 7px; }
-.p-card .stock::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
-.p-card .link { color: var(--gold); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-.p-card .link:hover { text-decoration: underline; }
-/* The whole card is an anchor now, so the inner "link" is styling, not a nested <a>. */
+/* The card foot is gone. It held an "In store" pill on every card — on a page
+   where everything shown is in store, so it distinguished nothing — and a
+   "View range" link duplicating the card's own anchor. The whole card is the
+   link; the lift, the gold edge and the gold title are the affordance. */
 .p-card { color: inherit; text-decoration: none; }
-.p-card:hover .link { text-decoration: underline; }
+
+.p-card:hover h3 { color: var(--gold); }
+
+.p-card h3 { transition: color 0.2s; }
 
 /* ---------- product photography placeholder ---------- */
 .p-thumb {
@@ -626,13 +700,35 @@ ul { list-style: none; }
   padding: 10px;
   position: relative;
 }
+/* The grade. Some supplier art is a cutout on transparency, some is a full
+   photo with its own bright ground (the cyan VEEV panel), and the scrim alone
+   only reaches the edges of the second kind. A shallow desaturation pulls both
+   onto one value without altering any printed detail — nothing here changes a
+   nicotine strength or a flavour name. Hover restores it fully. */
 .p-thumb.has-render img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: transform 0.35s;
+  filter: saturate(0.88) brightness(0.95);
+  transition: transform 0.35s, filter 0.35s;
+}
+
+.f-card:hover .p-thumb.has-render img,
+.p-card:hover .p-thumb.has-render img {
+  filter: none;
 }
 .f-card:hover .p-thumb.has-render img { transform: scale(1.06); }
+
+/* Same one-ground rule as .p-card .thumb — the flavour renders are the loudest
+   art on the site and they sit six to a row. The scrim sits above the image
+   but below the label, so only the crop is seated, never the text. */
+.f-card .p-thumb.has-render::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(118% 80% at 50% 42%, transparent 54%, rgba(12, 12, 12, 0.4) 100%);
+}
 
 /* ---------- brand detail page ---------- */
 .page-hero.brand-hero { text-align: left; }
@@ -729,22 +825,28 @@ ul { list-style: none; }
   gap: 8px;
 }
 .f-card .badge {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--gold);
   border: 1px solid rgba(var(--gold-rgb), 0.35);
-  border-radius: 999px;
-  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
 }
 .f-card .note { color: var(--muted); font-size: 0.8rem; }
+
+/* Puff counts are specifications. Mono with tabular figures so the column of
+   them down a grid lines up instead of jittering per digit width. */
 .f-card .meta {
   margin-top: auto;
   padding-top: 10px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   color: var(--muted-2);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
@@ -1205,10 +1307,6 @@ html.dialog-open { overflow: hidden; }
   .p-card h3 { font-size: 1.15rem; }
   .p-card .desc { font-size: 0.84rem; }
   .p-card .chips span { font-size: 0.66rem; }
-  .p-card .foot { margin-top: 8px; padding-top: 11px; gap: 8px; }
-  /* Both halves on one line — they wrapped to two at the narrow end. */
-  .p-card .stock,
-  .p-card .link { font-size: 0.7rem; letter-spacing: 0.04em; white-space: nowrap; }
   /* Two rows is enough of a taste while collapsed. Scoped to the collapsed
      state, or "View All" would expand the grid and still show only four. */
   .fx-reveal:not([data-expanded]) .flavour-grid > :nth-child(n + 5) {
