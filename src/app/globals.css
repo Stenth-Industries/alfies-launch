@@ -268,6 +268,10 @@ select:focus-visible,
   background: var(--ink);
   border-bottom: 1px solid var(--line);
 }
+
+/* Offsets an anchor-linked section so the sticky header does not cover its
+   heading when the browser jumps straight to it. */
+#new-arrivals { scroll-margin-top: 90px; }
 .site-header .container {
   display: flex;
   align-items: center;
