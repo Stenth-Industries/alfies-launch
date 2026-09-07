@@ -78,7 +78,7 @@ export default function HomePage() {
       </section>
 
       {/* ---------- new arrivals ---------- */}
-      <section className="section section-alt">
+      <section className="section section-alt" id="new-arrivals">
         <div className="container">
           <div className="section-head">
             <span className="kicker">New Arrivals</span>

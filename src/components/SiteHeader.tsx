@@ -9,6 +9,7 @@ import { PhoneIcon } from "./icons";
 
 const NAV = [
   { href: "/", label: "Home" },
+  { href: "/#new-arrivals", label: "New Arrivals" },
   { href: "/products", label: "Products" },
   { href: "/contact", label: "Contact Us" },
 ];
@@ -23,16 +24,32 @@ export default function SiteHeader() {
         <Logo height={54} />
 
         <nav className={`main-nav${open ? " open" : ""}`} aria-label="Main">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={pathname === item.href ? "active" : undefined}
-              onClick={() => setOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {NAV.map((item) => {
+            const hash = item.href.startsWith("/#") ? item.href.slice(1) : null;
+            // Next's router intercepts a same-page `#hash` Link and updates
+            // the URL without scrolling — a long-standing App Router gap. A
+            // plain anchor sidesteps the router entirely, so the browser's
+            // native (smooth, per the html rule) anchor scroll just works.
+            // Off the home page, `next/link` is kept so the hash still
+            // lands correctly once the new page has loaded.
+            if (hash && pathname === "/") {
+              return (
+                <a key={item.href} href={hash} onClick={() => setOpen(false)}>
+                  {item.label}
+                </a>
+              );
+            }
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={pathname === item.href ? "active" : undefined}
+                onClick={() => setOpen(false)}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="header-cta">
