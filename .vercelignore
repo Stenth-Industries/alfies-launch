@@ -1,32 +1,34 @@
-# Deploys run from the local directory, not from git, so .gitignore does not
-# apply here. Without this file the CLI uploads ~800MB of build output and
-# source imagery that `next build` never reads.
+# Keeps build-irrelevant bulk out of the deployment source.
+#
+# Patterns are gitignore syntax, so every one is anchored with a leading slash.
+# Unanchored, a bare name matches a directory at ANY depth: `products` also
+# matched src/app/(site)/products, which silently dropped the route from the
+# build and served a 404 for /products.
 
-node_modules
-.next
+/node_modules
+/.next
+/.claude
+/.agents
+/skills-lock.json
 *.tsbuildinfo
-.next-dev.*.log
+/.next-dev.stderr.log
+/.next-dev.stdout.log
 
-# Render/review output and source image libraries. Nothing under src/ imports
-# these — the shipped artwork lives in public/.
-artifacts
-product-cover-images
-products
-brand-logo
+# Render/review output and source image libraries. Nothing under src/ reads
+# these; the artwork the site actually serves lives in public/.
+/artifacts
+/product-cover-images
+/products
+/brand-logo
 
-# Local agent tooling
-.claude
-.agents
-skills-lock.json
-
-# Scratch files kept at the repo root
-hero.html
-temp.html
-image.png
-new-hero.png
-logo-emblem.png
-logo.png
-theme.png
-reference-design-for-home-page.png
-new-logo(with bg).jpeg
-*.pdf
+# Scratch files kept at the repo root.
+/hero.html
+/temp.html
+/image.png
+/new-hero.png
+/logo-emblem.png
+/logo.png
+/theme.png
+/reference-design-for-home-page.png
+/new-logo(with bg).jpeg
+/Alfies-Compliance-Brief.pdf
