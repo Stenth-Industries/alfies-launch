@@ -14,8 +14,6 @@ export const STORE = {
   address: "201 Cundles Rd East",
   postalCode: "L4M 4S5",
 
-  // TODO: confirm with Alfie before launch
-  email: "hello@alfiesvape.ca",
   instagram: "https://instagram.com",
   facebook: "https://facebook.com",
 

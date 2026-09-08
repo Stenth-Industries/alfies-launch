@@ -7,15 +7,14 @@ import { STORE } from "@/data/store";
 import { FLAVOUR_PROFILES, arrivalPicks } from "@/data/home";
 import { BRANDS, BROWSABLE_BRANDS, PRODUCT_BRANDS } from "@/data/catalog";
 import {
-  PinIcon,
-  PhoneIcon,
   BagIcon,
-  StoreIcon,
-  RosetteIcon,
-  ChatIcon,
-  HeartIcon,
-  ClockIcon,
-  MailIcon,
+  StorefrontIcon,
+  SealIcon,
+  ConversationIcon,
+  HandHeartIcon,
+  PinMark,
+  ClockMark,
+  PhoneMark,
 } from "@/components/icons";
 
 /**
@@ -47,28 +46,28 @@ export default function HomePage() {
       <section className="trust">
         <div className="container">
           <div className="trust-item">
-            <span className="ico"><StoreIcon /></span>
+            <span className="ico"><StorefrontIcon /></span>
             <div>
               <h3>Local to {STORE.city}</h3>
               <p>Proudly serving our community.</p>
             </div>
           </div>
           <div className="trust-item">
-            <span className="ico"><RosetteIcon /></span>
+            <span className="ico"><SealIcon /></span>
             <div>
               <h3>Quality Products</h3>
               <p>Top brands and trusted products.</p>
             </div>
           </div>
           <div className="trust-item">
-            <span className="ico"><ChatIcon /></span>
+            <span className="ico"><ConversationIcon /></span>
             <div>
               <h3>Honest Advice</h3>
               <p>Straight answers about what we stock.</p>
             </div>
           </div>
           <div className="trust-item">
-            <span className="ico"><HeartIcon /></span>
+            <span className="ico"><HandHeartIcon /></span>
             <div>
               <h3>Friendly Service</h3>
               <p>We&apos;re here to help you find what you need.</p>
@@ -244,7 +243,7 @@ export default function HomePage() {
 
           <div className="visit-info">
             <div className="info-row">
-              <span className="ico"><PinIcon /></span>
+              <span className="ico"><PinMark /></span>
               <div>
                 <h4>Address</h4>
                 <div className="val">
@@ -253,7 +252,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="info-row">
-              <span className="ico"><ClockIcon /></span>
+              <span className="ico"><ClockMark /></span>
               <div>
                 <h4>Hours</h4>
                 <div className="val">
@@ -266,20 +265,11 @@ export default function HomePage() {
               </div>
             </div>
             <div className="info-row">
-              <span className="ico"><PhoneIcon /></span>
+              <span className="ico"><PhoneMark /></span>
               <div>
                 <h4>Phone</h4>
                 <div className="val">
                   <a href={STORE.phoneHref}>{STORE.phone}</a>
-                </div>
-              </div>
-            </div>
-            <div className="info-row">
-              <span className="ico"><MailIcon /></span>
-              <div>
-                <h4>Email</h4>
-                <div className="val">
-                  <a href={`mailto:${STORE.email}`}>{STORE.email}</a>
                 </div>
               </div>
             </div>

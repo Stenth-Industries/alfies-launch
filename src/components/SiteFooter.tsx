@@ -50,7 +50,6 @@ export default function SiteFooter() {
               </span>
             </li>
             <li><a href={STORE.phoneHref}>{STORE.phone}</a></li>
-            <li><a href={`mailto:${STORE.email}`}>{STORE.email}</a></li>
             {STORE.hours.map((h) => (
               <li key={h.days}>
                 <span>{h.days}: {h.time}</span>

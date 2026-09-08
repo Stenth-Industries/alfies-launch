@@ -46,6 +46,15 @@
      the two places it renders (.f-card .meta at 11.2px, .footer-bottom at
      12.8px) are both small text needing 4.5:1. 0.50 measures 5.26 and 5.31. */
   --muted-2: rgba(255, 255, 255, 0.5);
+  /* Informational marks — the trust badges and the contact card rows.
+     Full --gold on these made gold the colour of everything: the CTA, the
+     badge and the address block all read at one weight, so it signalled
+     nothing. This steps them back while staying in the gold family, so the
+     warmth holds where a plain grey would go cold. It is the rule
+     .footer-socials already follows: quiet mark, gold on interaction.
+     --gold-soft at 0.62 measures 6.10:1 on --ink and 5.88:1 on --ink-3,
+     against the 3:1 that non-text content needs; full gold is 9.66:1. */
+  --ico-quiet: rgba(250, 221, 153, 0.62);
   /* 16px read as soft consumer-app chrome. 8px is a corner, not a pill, and
      it lets the concentric rule work: an 8px card holding a 6px control. */
   --radius: 8px;
@@ -497,18 +506,16 @@ select:focus-visible,
   gap: clamp(18px, 2vw, 32px);
   padding-block: clamp(26px, 3vw, 40px);
 }
-.trust-item { display: flex; gap: 16px; align-items: flex-start; }
+.trust-item { display: flex; gap: 14px; align-items: flex-start; }
+/* The mark stands on its own — no tinted tile behind it. */
 .trust-item .ico {
   flex: none;
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
   display: grid;
   place-items: center;
-  background: rgba(var(--gold-rgb), 0.1);
-  border: 1px solid rgba(var(--gold-rgb), 0.25);
+  margin-top: 1px;
+  color: var(--ico-quiet);
 }
-.trust-item .ico svg { width: 22px; height: 22px; fill: var(--gold); }
+.trust-item .ico svg { width: 27px; height: 27px; }
 .trust-item h3 { font-size: 1rem; font-weight: 600; margin-bottom: 3px; }
 .trust-item p { font-size: 0.88rem; color: var(--muted); }
 
@@ -788,14 +795,21 @@ select:focus-visible,
 }
 .series-head p { margin-top: 8px; color: var(--muted); max-width: 62ch; font-size: 0.92rem; }
 .series-head .chips { display: flex; flex-wrap: wrap; gap: 8px; flex: none; }
+/*
+ * A puff count and a bottle format are specifications, so they get the same
+ * mono/tabular treatment as the product-card chips. These were gold on a gold
+ * wash, which read muddy at this size and made them the only chip set on the
+ * site shouting for attention.
+ */
 .series-head .chips span {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--gold);
-  background: rgba(var(--gold-rgb), 0.1);
-  border: 1px solid rgba(var(--gold-rgb), 0.25);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.7rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 4px 12px;
+  padding: 5px 12px;
   white-space: nowrap;
 }
 
@@ -1036,25 +1050,30 @@ html.dialog-open { overflow: hidden; }
 }
 .visit h2 { font-size: clamp(1.8rem, 3.2vw, 2.5rem); margin-bottom: 16px; }
 .visit p { color: var(--muted); max-width: 50ch; margin-bottom: 28px; }
-.visit-info { display: grid; gap: 14px; }
+/*
+ * One grouped list rather than four boxes: a hairline between rows carries the
+ * separation, so the rows read as a single contact block instead of a stack of
+ * identical cards. The first and last rules trim the outer padding so the list
+ * aligns flush with whatever sits beside it.
+ */
+.visit-info { display: grid; }
 .info-row {
   display: flex;
-  gap: 16px;
+  gap: 15px;
   align-items: flex-start;
-  background: var(--ink-3);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 18px 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
 }
+.info-row:first-child { border-top: 0; padding-top: 0; }
+.info-row:last-child { padding-bottom: 0; }
+/* The mark stands on its own — no tinted tile behind it. */
 .info-row .ico {
   flex: none;
-  width: 42px; height: 42px;
-  border-radius: 11px;
   display: grid; place-items: center;
-  background: rgba(var(--gold-rgb), 0.1);
-  border: 1px solid rgba(var(--gold-rgb), 0.25);
+  margin-top: 1px;
+  color: var(--ico-quiet);
 }
-.info-row .ico svg { width: 20px; height: 20px; fill: var(--gold); }
+.info-row .ico svg { width: 26px; height: 26px; }
 .info-row h4 { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 2px; }
 .info-row .val { font-weight: 600; font-size: 1rem; }
 .info-row .val a:hover { color: var(--gold); }
@@ -1087,12 +1106,12 @@ html.dialog-open { overflow: hidden; }
   gap: clamp(24px, 3vw, 56px);
   align-items: start;
 }
-.contact-panel {
-  background: var(--ink-3);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: clamp(20px, 2.4vw, 38px);
-}
+/*
+ * Unboxed to match the contact list beside it — the hours table already
+ * separates its rows with the same hairline, so the two columns read as one
+ * system rather than a list next to a card.
+ */
+.contact-panel { padding: 0; }
 .contact-panel h2 { font-size: 1.55rem; margin-bottom: 10px; }
 .contact-panel > p { color: var(--muted); font-size: 0.95rem; margin-bottom: 26px; }
 
@@ -1265,6 +1284,15 @@ html.dialog-open { overflow: hidden; }
   .series-head { flex-direction: column; align-items: flex-start; gap: 14px; }
   .visit .container { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; }
+  /*
+   * Stacked, the hours panel lands directly under the contact list with
+   * nothing between them, so "Store Hours" reads as part of the email row.
+   * Side by side the column gap does that job; here a rule has to.
+   */
+  .contact-panel {
+    border-top: 1px solid var(--line);
+    padding-top: clamp(26px, 5vw, 36px);
+  }
   .site-footer .top { grid-template-columns: 1fr 1fr; }
   .main-nav {
     display: none;

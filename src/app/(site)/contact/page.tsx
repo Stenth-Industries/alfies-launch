@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { STORE } from "@/data/store";
-import { PinIcon, PhoneIcon, MailIcon } from "@/components/icons";
+import { PinMark, PhoneMark } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -21,8 +21,8 @@ export default function ContactPage() {
             Drop in or <span className="accent">reach out</span>
           </h1>
           <p>
-            Questions about stock, flavours or devices? Call, email, or just
-            come by — we&apos;re in the heart of {STORE.city}.
+            Questions about stock, flavours or devices? Give us a call, or
+            just come by — we&apos;re in the heart of {STORE.city}.
           </p>
         </div>
       </section>
@@ -32,7 +32,7 @@ export default function ContactPage() {
           {/* ---------- info column ---------- */}
           <div className="visit-info">
             <div className="info-row">
-              <span className="ico"><PinIcon /></span>
+              <span className="ico"><PinMark /></span>
               <div>
                 <h4>Address</h4>
                 <div className="val">
@@ -45,23 +45,12 @@ export default function ContactPage() {
             </div>
 
             <div className="info-row">
-              <span className="ico"><PhoneIcon /></span>
+              <span className="ico"><PhoneMark /></span>
               <div>
                 <h4>Phone</h4>
                 <div className="val">
                   <a href={STORE.phoneHref}>{STORE.phone}</a>
                   <small>Fastest way to check stock</small>
-                </div>
-              </div>
-            </div>
-
-            <div className="info-row">
-              <span className="ico"><MailIcon /></span>
-              <div>
-                <h4>Email</h4>
-                <div className="val">
-                  <a href={`mailto:${STORE.email}`}>{STORE.email}</a>
-                  <small>Replies within one business day</small>
                 </div>
               </div>
             </div>

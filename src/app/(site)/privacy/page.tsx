@@ -38,8 +38,8 @@ export default function PrivacyPage() {
           <p>
             {STORE.fullName}, {STORE.address}, {STORE.city},{" "}
             {STORE.provinceShort} {STORE.postalCode}. Questions about privacy
-            can go to <a href={`mailto:${STORE.email}`}>{STORE.email}</a> or{" "}
-            <a href={STORE.phoneHref}>{STORE.phone}</a>.
+            can go to <a href={STORE.phoneHref}>{STORE.phone}</a>, or come
+            by the shop.
           </p>
 
           <h2>The age check</h2>
