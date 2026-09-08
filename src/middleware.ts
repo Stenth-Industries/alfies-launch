@@ -3,7 +3,16 @@ import { AGE_COOKIE, AGE_GATE_PATH } from "@/lib/age-gate";
 
 /**
  * Assets an unverified visitor is allowed to load, because the gate page
- * itself renders them. The emblem of the shop is not a vaping product.
+ * itself renders them, or because a browser tab and a link preview ask for
+ * them before anyone has been through the gate. The emblem of the shop is not
+ * a vaping product, and neither the icons nor the share card show one.
+ *
+ * The icon and opengraph-image entries are Next file-convention routes, not
+ * files in /public, but they are fetched by pathname just the same — by the
+ * browser for the tab icon, and by a link unfurler that will never present a
+ * cookie. Without them here both fall through to the catch-all rewrite and
+ * return the gate's HTML with a 200, so the tab shows no icon and every shared
+ * link previews with no image.
  *
  * These are matched against the raw pathname, not just `/_next/image`'s `url`
  * param: images are served unoptimised (see next.config.mjs), so the browser
@@ -11,7 +20,14 @@ import { AGE_COOKIE, AGE_GATE_PATH } from "@/lib/age-gate";
  * them. Without the raw check the gate's own logo falls through to the
  * catch-all rewrite and the <img> receives an HTML document.
  */
-const UNGATED_ASSETS = ["/logo-gold.png", "/logo-light.png", "/logo.png"];
+const UNGATED_ASSETS = [
+  "/logo-gold.png",
+  "/logo-light.png",
+  "/logo.png",
+  "/icon.png",
+  "/apple-icon.png",
+  "/opengraph-image.png",
+];
 
 /**
  * Product imagery in /public, which stays behind the gate. Page routes are not

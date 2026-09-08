@@ -9,6 +9,9 @@ export const STORE = {
   province: "Ontario",
   provinceShort: "ON",
 
+  /** Canonical origin. Used for metadataBase, canonical URLs and share previews. */
+  url: "https://alfiesvape.com",
+
   phone: "(705) 739-9990",
   phoneHref: "tel:+17057399990",
   address: "201 Cundles Rd East",

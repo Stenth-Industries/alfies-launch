@@ -46,20 +46,53 @@ const poppins = Poppins({
  * age gate entirely — a crawler and anyone reading a shared link sees it
  * without ever being asked their age. So nothing here names a brand, a product,
  * a flavour or a device: it says where the shop is and who may enter, and
- * that's all. There is deliberately no OG image; a product shot in a link
- * preview is a vaping advertisement shown to an unverified audience.
+ * that's all.
+ *
+ * The same rule governs the share image (`opengraph-image.png`): it is the shop
+ * emblem, the city and the age line, and nothing else. No device, pod, flavour
+ * or brand appears in it — a product shot in a link preview would be a vaping
+ * advertisement shown to an unverified audience. The middleware already treats
+ * the emblem as outside that category, ungating it so the age gate can render
+ * its own logo.
+ *
+ * `metadataBase` has to be absolute or the OG image resolves against
+ * localhost in every shared link. It reads from the environment first so a
+ * preview deployment advertises itself rather than production.
  */
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_ENV === "production"
+    ? STORE.url
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : STORE.url);
+
+const SHARE_DESCRIPTION = `Specialty vape store in ${STORE.city}, ${STORE.province}. In-store only, ${STORE.minimumAge}+ with government-issued photo ID.`;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${STORE.fullName} | ${STORE.city}, ${STORE.province}`,
     template: `%s | ${STORE.fullName}`,
   },
   description: `${STORE.fullName} is a specialty vape store in ${STORE.city}, ${STORE.province}. In-store only, ${STORE.minimumAge}+ with government-issued photo ID. Call ${STORE.phone} for hours and directions.`,
+  applicationName: STORE.fullName,
   robots: { index: true, follow: true },
+  alternates: { canonical: "/" },
   openGraph: {
     title: `${STORE.fullName} | ${STORE.city}, ${STORE.province}`,
-    description: `Specialty vape store in ${STORE.city}. In-store only, ${STORE.minimumAge}+ with photo ID.`,
+    description: SHARE_DESCRIPTION,
+    siteName: STORE.fullName,
+    url: "/",
+    locale: "en_CA",
     type: "website",
+  },
+  // No `images` key: Next fills og:image and twitter:image from the
+  // opengraph-image.png file convention beside this file.
+  twitter: {
+    card: "summary_large_image",
+    title: `${STORE.fullName} | ${STORE.city}, ${STORE.province}`,
+    description: SHARE_DESCRIPTION,
   },
 };
 
