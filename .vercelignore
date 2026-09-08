@@ -1,0 +1,32 @@
+# Deploys run from the local directory, not from git, so .gitignore does not
+# apply here. Without this file the CLI uploads ~800MB of build output and
+# source imagery that `next build` never reads.
+
+node_modules
+.next
+*.tsbuildinfo
+.next-dev.*.log
+
+# Render/review output and source image libraries. Nothing under src/ imports
+# these — the shipped artwork lives in public/.
+artifacts
+product-cover-images
+products
+brand-logo
+
+# Local agent tooling
+.claude
+.agents
+skills-lock.json
+
+# Scratch files kept at the repo root
+hero.html
+temp.html
+image.png
+new-hero.png
+logo-emblem.png
+logo.png
+theme.png
+reference-design-for-home-page.png
+new-logo(with bg).jpeg
+*.pdf

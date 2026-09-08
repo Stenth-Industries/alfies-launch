@@ -8,3 +8,34 @@ dev.log
 
 # Claude Code skills (local only)
 .claude/skills/
+
+# Dev server logs
+.next-dev.*.log
+
+# Local agent skills (mirrors .claude/skills/ above)
+.agents/
+skills-lock.json
+
+# Generated review + render output. Listed as artifacts/* rather than
+# artifacts/ so the inventory below can be re-included: git cannot
+# un-ignore a file whose parent directory was excluded outright.
+artifacts/*
+!artifacts/product-assets/
+artifacts/product-assets/*
+# Imported by src/data/catalogue.ts, so this one is tracked.
+!artifacts/product-assets/product-assets-inventory.json
+
+# Image libraries rebuilt by scripts/build-clean-product-library.mjs
+# and the hero render pipeline.
+public/products-clean/
+public/products-clean-web/
+public/redesign/
+public/hero/
+public/hero-v1.png
+
+# Scratch files
+hero.html
+temp.html
+image.png
+
+.vercel
